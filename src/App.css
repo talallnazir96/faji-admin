@@ -1,12 +1,46 @@
+body {
+  font-family: 'Montserrat', sans-serif;
+}
 .App {
   text-align: center;
+  display: flex;
 }
-
+.sidebar {
+  position: fixed;
+  overflow: auto;
+  width: 20vw;
+  background-color: #1F1F1F;
+  height: 100vh;
+  padding-top: 2vw;
+  margin-top: 2%;
+  padding-left: 1vw;
+  padding-right: 2vw;
+}
+.sidebar a, .sidebar svg {
+  color: #fff;
+  font-size: 20px;
+}
+.sidebar .sidebarText span {
+  font-size: 14px !important;
+}
+.main-content {
+  flex-grow: 1;
+  padding: 20px;
+}
 .App-logo {
   height: 40vmin;
   pointer-events: none;
 }
-
+.sidebar a.active {
+  background-color: #FD99C9;
+  border-radius: 8px;
+}
+.loginForm {
+  background: #FFF;
+  padding: 5% 3% !important;
+  border-radius: 25px;
+  box-shadow: 0 0px 10px #eee;
+}
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
@@ -14,7 +48,7 @@
 }
 
 .App-header {
-  background-color: #282c34;
+  background-color: #eee;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -35,4 +69,10 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.css-1d6wzja-MuiButton-startIcon {
+  display: inherit;
+  margin-right: 2px;
+  margin-top: -3px;
 }
