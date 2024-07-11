@@ -4,7 +4,6 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-import MenuIcon from '@mui/icons-material/Menu';
 import { styled } from '@mui/system';
 import logo from '../assets/LogoBlack.png';
 import InputAdornment from '@mui/material/InputAdornment';

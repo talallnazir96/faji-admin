@@ -57,10 +57,10 @@ const handleDialogConfirm = () => {
   return (
     <>
     <Grid container sx={{marginTop: "8%", marginBottom: "2%"}}>
-        <Grid item xs={10} sm={10} md={10}>
+        <Grid item xs={8} sm={8} md={10}>
             <Typography variant="h4" sx={{fontFamily: 'Montserrat, sans-serif', textAlign: "left", fontWeight: "500"}}>Manage Application Notifications</Typography>
         </Grid>
-        <Grid item xs={2} sm={2} md={2} align="right">
+        <Grid item xs={4} sm={4} md={2} align="right">
           <Button  onClick={handleCreate} variant="outlined" color='customColor' startIcon={<AddCircleIcon />}>Add New</Button>
         </Grid>
         <Grid item xs={12} sm={12} md={12} sx={{marginTop: "4%", marginBottom: "2%"}}>

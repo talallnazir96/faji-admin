@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { List, ListItem, ListItemIcon, ListItemText, ListItemButton, ListSubheader, Box, Typography, Collapse } from '@mui/material';
+import { List, ListItem, ListItemIcon, ListItemText, ListItemButton, Collapse } from '@mui/material';
 import HomeIcon from '@mui/icons-material/Home';
 import PeopleIcon from '@mui/icons-material/People';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -12,8 +12,11 @@ import LocalActivityIcon from '@mui/icons-material/LocalActivity';
 import EmailIcon from '@mui/icons-material/Email';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import FeedIcon from '@mui/icons-material/Feed';
 import AppsIcon from '@mui/icons-material/Apps';
+import AssessmentIcon from '@mui/icons-material/Assessment';
+import ReportIcon from '@mui/icons-material/Report';
 import Logout from './Logout';
 
 function Sidebar({ onLogout }) {
@@ -29,6 +32,10 @@ function Sidebar({ onLogout }) {
         <ListItem button component={NavLink} to="/">
           <ListItemIcon sx={{minWidth: "32px"}}><HomeIcon /></ListItemIcon>
           <ListItemText className="sidebarText" primary="Dashboard" style={{ fontFamily: 'Montserrat, sans-serif' }} />
+        </ListItem>
+        <ListItem button component={NavLink} to="/finance">
+          <ListItemIcon sx={{minWidth: "32px"}}><AccountBalanceIcon /></ListItemIcon>
+          <ListItemText className="sidebarText" primary="Financial Overview" style={{ fontFamily: 'Montserrat, sans-serif' }} />
         </ListItem>
         <ListItem button component={NavLink} to="/events">
           <ListItemIcon sx={{minWidth: "32px"}}><EventIcon /></ListItemIcon>
@@ -79,10 +86,18 @@ function Sidebar({ onLogout }) {
           <ListItemIcon sx={{minWidth: "32px"}}><SettingsIcon /></ListItemIcon>
           <ListItemText className="sidebarText" primary="Settings" style={{ fontFamily: 'Montserrat, sans-serif' }} />
         </ListItem>
+        <ListItem button component={NavLink} to="/audit">
+          <ListItemIcon sx={{minWidth: "32px"}}><AssessmentIcon /></ListItemIcon>
+          <ListItemText className="sidebarText" primary="Audit Logs" style={{ fontFamily: 'Montserrat, sans-serif' }} />
+        </ListItem>
+        <ListItem button component={NavLink} to="/reports">
+          <ListItemIcon sx={{minWidth: "32px"}}><ReportIcon /></ListItemIcon>
+          <ListItemText className="sidebarText" primary="Escalations & Reports" style={{ fontFamily: 'Montserrat, sans-serif' }} />
+        </ListItem>
         <ListItem>
           <ListItemIcon sx={{minWidth: "32px"}}><PowerSettingsNewIcon /></ListItemIcon>
           <Logout onLogout={onLogout} /> {/* Render Logout component */}
-        </ListItem>
+        </ListItem><br/>
       </List>
     </div>
   );

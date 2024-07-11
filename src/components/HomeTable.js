@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
-  Paper, IconButton, Typography, Button
+  Paper, Typography, Button
 } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import PendingIcon from '@mui/icons-material/HourglassEmpty';

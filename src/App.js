@@ -27,6 +27,9 @@ import PushNotificationList from './components/notifications/PushNotificationLis
 import NotificationForm from './components/notifications/AddNotification';
 import Blogs from './pages/Blogs';
 import BlogForm from './components/blogs/BlogForm';
+import Finance from './pages/Finance';
+import Audit from './pages/Audit';
+import Reports from './pages/Reports';
 
 function App() {
   // const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -97,6 +100,9 @@ function App() {
                       <Route path="/blogs" element={isLoggedIn ? <Blogs /> : <Navigate to="/login" />} />
                       <Route path="/blogs/blog-form/create" element={isLoggedIn ? <BlogForm /> : <Navigate to="/login" />} />
                       <Route path="/blogs/blog-form/edit/:id" element={isLoggedIn ? <BlogForm /> : <Navigate to="/login" />} />
+                      <Route path="/finance" element={isLoggedIn ? <Finance /> : <Navigate to="/login" />} />
+                      <Route path="/audit" element={isLoggedIn ? <Audit /> : <Navigate to="/login" />} />
+                      <Route path="/reports" element={isLoggedIn ? <Reports /> : <Navigate to="/login" />} />
                     </Routes>
                   </div>
                 </Grid>
@@ -130,7 +136,10 @@ function App() {
                     <Route path="/app-notifications/edit/:id" element={isLoggedIn ? <NotificationForm /> : <Navigate to="/login" />} />
                     <Route path="/blogs" element={isLoggedIn ? <Blogs /> : <Navigate to="/login" />} />
                     <Route path="/blogs/blog-form/create" element={isLoggedIn ? <BlogForm /> : <Navigate to="/login" />} />
+                    <Route path="/finance" element={isLoggedIn ? <Finance /> : <Navigate to="/login" />} />
                     <Route path="/blogs/blog-form/edit/:id" element={isLoggedIn ? <BlogForm /> : <Navigate to="/login" />} />
+                    <Route path="/audit" element={isLoggedIn ? <Audit /> : <Navigate to="/login" />} />
+                    <Route path="/reports" element={isLoggedIn ? <Reports /> : <Navigate to="/login" />} />
                   </Routes>
                 </div>
               </Grid>

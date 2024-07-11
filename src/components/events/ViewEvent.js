@@ -1,8 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Grid, Button, Typography, Card, CardContent, Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import Image from "../../assets/event.jpg"
+import { AgGridReact } from 'ag-grid-react';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-alpine.css';
+
 const data = [
     { name: 'Mon', sales: 4 },
     { name: 'Tue', sales: 3 },
@@ -14,6 +18,25 @@ const data = [
   ];
 
 const ViewEvent = () => {
+    const [rowData] = useState([
+        { id: 1, name: 'Dummy', email: 'abc@gmail.com', user_role: 'Organizer', registeration_date: '2024-07-15', status: 'active', tickets_purchased: '20'},
+        { id: 2, name: 'Dummy', email: 'abc@gmail.com', user_role: 'Organizer', registeration_date: '2024-07-15', status: 'active', tickets_purchased: '10'},
+        { id: 3, name: 'Dummy', email: 'abc@gmail.com', user_role: 'Admin', registeration_date: '2024-07-15', status: 'active', tickets_purchased: '0'},
+        { id: 4, name: 'Dummy', email: 'abc@gmail.com', user_role: 'Admin', registeration_date: '2024-07-15', status: 'active', tickets_purchased: '0'},
+        { id: 5, name: 'Dummy', email: 'abc@gmail.com', user_role: 'Organizer', registeration_date: '2024-07-15', status: 'active', tickets_purchased: '50'},
+        { id: 6, name: 'Dummy', email: 'abc@gmail.com', user_role: 'Organizer', registeration_date: '2024-07-15', status: 'active', tickets_purchased: '20'},
+        { id: 7, name: 'Dummy', email: 'abc@gmail.com', user_role: 'Attendee', registeration_date: '2024-07-15', status: 'inactive', tickets_purchased: '20'},
+        { id: 8, name: 'Dummy', email: 'abc@gmail.com', user_role: 'Organizer', registeration_date: '2024-07-15', status: 'active', tickets_purchased: '20'},
+      ]);
+      const [columnDefs] = useState([
+        { headerName: 'User ID', field: 'id', filter: true, floatingFilter: true },
+        { headerName: 'User Name', field: 'name', filter: true, floatingFilter: true },
+        { headerName: 'Email', field: 'email', filter: true, floatingFilter: true },
+        { headerName: 'User Role', field: 'user_role', filter: true, floatingFilter: true },
+        { headerName: 'Registeration Date', field: 'registeration_date', filter: true, floatingFilter: true },
+        { headerName: 'Status', field: 'status', filter: true, floatingFilter: true },
+        { headerName: 'Tickets Purchased', field: 'tickets_purchased', filter: true, floatingFilter: true },
+      ]);
     const navigate = useNavigate();
     // const { id } = useParams();
     const handleGoBack = () => {
@@ -22,7 +45,7 @@ const ViewEvent = () => {
     return (
         <>
             <Grid container sx={{marginTop: "8%", marginBottom: "2%"}} spacing={3}>
-                <Grid item xs={12} sm={8} md={8}>
+                <Grid item xs={12} sm={12} md={8}>
                     <Typography variant="h4" sx={{fontFamily: 'Montserrat, sans-serif', textAlign: "left", fontWeight: "500"}}>Event Details</Typography>
                     <Grid container sx={{marginTop: "4%"}}>
                         <Grid item xs={12} sm={6} md={6}>
@@ -69,15 +92,15 @@ const ViewEvent = () => {
                         </Grid>
                     </Grid>
                 </Grid>
-                <Grid item xs={12} sm={4} md={4}>
-                    <Card sx={{background: "#1F1F1F", color: "#FFF", width: "80%", float: "right"}}>
+                <Grid item xs={12} sm={12} md={4}>
+                    <Card className="view_event_ticket" sx={{background: "#1F1F1F", color: "#FFF", width: "80%", float: "right"}}>
                     <CardContent>
                         <Typography variant='h4'  sx={{fontFamily: 'Montserrat, sans-serif'}}>Total Seats</Typography>
                         <Typography variant='h3'  sx={{fontFamily: 'Montserrat, sans-serif'}}>100</Typography>
                         <Typography variant='p'  sx={{fontFamily: 'Montserrat, sans-serif', fontSize: "13px"}}>Seats added by an organizer</Typography>
                     </CardContent>
                     </Card>
-                    <Card sx={{background: "#FFF", color: "#1F1F1F", width: "80%", float: "right", marginTop: "4%"}}>
+                    <Card className="view_event_ticket" sx={{background: "#FFF", color: "#1F1F1F", width: "80%", float: "right", marginTop: "4%"}}>
                     <CardContent>
                         <Typography variant='h4'  sx={{fontFamily: 'Montserrat, sans-serif'}}>Tickets Sold</Typography>
                         <Typography variant='h3'  sx={{fontFamily: 'Montserrat, sans-serif'}}>50</Typography>
@@ -98,6 +121,20 @@ const ViewEvent = () => {
                     </CardContent>
                     </Card>
                 </Grid>      
+            </Grid>
+            <Grid container spacing={3}>
+                <Grid item xs={12} sm={12} md={12} sx={{marginBottom: "2%"}}>
+            <Typography variant="h5" sx={{fontFamily: 'Montserrat, sans-serif', textAlign: "left", fontWeight: "500", marginBottom: "1%"}}>Ticket Purchased by following users</Typography>
+            <div className="ag-theme-alpine" style={{ height: 400, width: '100%' }}>
+                    <AgGridReact
+                    rowData={rowData}
+                    columnDefs={columnDefs}
+                    pagination={true}
+                    paginationPageSize={6}
+                    domLayout="autoHeight"
+                    />
+                </div>
+                </Grid>
             </Grid>
             <Button variant="contained" onClick={handleGoBack} sx={{ mt: 2 }}>
         Go Back

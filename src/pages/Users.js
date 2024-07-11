@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Typography, Grid, Button, IconButton, Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Slide, Snackbar, Alert } from '@mui/material';
+import { Typography, Grid, Button, IconButton, Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Slide, Snackbar, Alert, Tab } from '@mui/material';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
@@ -7,6 +7,10 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import EditIcon from '@mui/icons-material/Edit';
 import { Link } from 'react-router-dom'; 
+import TabContext from '@mui/lab/TabContext';
+import TabList from '@mui/lab/TabList';
+import TabPanel from '@mui/lab/TabPanel';
+
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -90,17 +94,35 @@ const handleDialogConfirm = () => {
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
   };
+  // Tab Data
+  const [value, setValue] = React.useState('1');
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
   return (
     <>
       <Grid container sx={{marginTop: "8%", marginBottom: "2%"}}>
-        <Grid item xs={10} sm={10} md={10}>
+        <Grid item xs={8} sm={8} md={10}>
           <Typography variant='h4' style={{fontFamily: 'Montserrat, sans-serif', textAlign: "left", fontWeight: "500"}}>Manage Users</Typography>
         </Grid>
-        <Grid item xs={2} sm={2} md={2} align="right">
+        <Grid item xs={4} sm={4} md={2} align="right">
           <Button component={Link} to="/users/add-user" variant="outlined" color='customColor' startIcon={<AddCircleIcon />}>Add New</Button>
         </Grid>
         <Grid item xs={12} sm={12} md={12} sx={{marginTop: "4%"}}>
-          <div className="ag-theme-alpine" style={{ height: 400, width: '100%' }}>
+          <Box sx={{ width: '100%', typography: 'body1' }}>
+            <TabContext value={value}>
+              <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                <TabList onChange={handleChange} aria-label="lab API tabs example">
+                  <Tab label="Admin" value="1" sx={{fontFamily: 'Montserrat, sans-serif'}} />
+                  <Tab label="Organizers or Hosts" value="2" sx={{fontFamily: 'Montserrat, sans-serif'}} />
+                  <Tab label="Attendees" value="3" sx={{fontFamily: 'Montserrat, sans-serif'}} />
+                </TabList>
+              </Box>
+              <TabPanel value="1" sx={{textAlign: "left", fontSize: "24px", fontFamily: 'Montserrat, sans-serif'}}>Admin</TabPanel>
+              <TabPanel value="2" sx={{textAlign: "left", fontSize: "24px", fontFamily: 'Montserrat, sans-serif'}}>Organizers or Hosts</TabPanel>
+              <TabPanel value="3" sx={{textAlign: "left", fontSize: "24px", fontFamily: 'Montserrat, sans-serif'}}>Attendees</TabPanel>
+              <div className="ag-theme-alpine" style={{ height: 400, width: '100%' }}>
             <AgGridReact
               rowData={rowData}
               columnDefs={columnDefs}
@@ -109,6 +131,8 @@ const handleDialogConfirm = () => {
               domLayout="autoHeight"
             />
           </div>
+            </TabContext>
+          </Box>
         </Grid>
       </Grid> 
       <Dialog open={dialogOpen} onClose={handleDialogClose} TransitionComponent={Transition} keepMounted aria-describedby="alert-dialog-slide-description">

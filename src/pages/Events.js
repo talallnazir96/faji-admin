@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
-import { Typography, Grid, Button, IconButton, Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Slide, Snackbar, Alert } from '@mui/material';
+import { Typography, Grid, Button, IconButton, Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Slide, Snackbar, Alert 
+, Tab} from '@mui/material';
+import TabContext from '@mui/lab/TabContext';
+import TabList from '@mui/lab/TabList';
+import TabPanel from '@mui/lab/TabPanel';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
@@ -34,10 +38,42 @@ function Events() {
     { headerName: 'Title', field: 'title', filter: true, floatingFilter: true },
     { headerName: 'Date', field: 'date', filter: true, floatingFilter: true },
     { headerName: 'Time', field: 'time', filter: true, floatingFilter: true },
+    {
+      headerName: 'Status',
+      field: 'status',
+      editable: true,
+      cellRenderer: (params) => {
+        const handleChange = (event) => {
+          const newValue = event.target.value;
+          setSnackbarOpen(true)
+          setSnackbarMessage('Event Status Updated Successfully!');
+          setSnackbarSeverity('success');
+          params.setValue(newValue); // Update the grid value
+        };
+
+        return (
+          <select
+            value={params.value}
+            onChange={handleChange}
+            style={{
+              padding: '5px',
+              fontSize: '14px',
+              border: 'none',
+              borderRadius: '4px',
+              backgroundColor: 'transparent',
+              color: '#333',
+            }}
+          >
+            <option value="approved">Approved</option>
+            <option value="declined">Declined</option>
+            <option value="req_info">Need Info.</option>
+          </select>
+        );
+      },
+    },
     { headerName: 'Seats', field: 'seats', filter: true, floatingFilter: true },
     { headerName: 'Location', field: 'location', filter: true, floatingFilter: true },
     { headerName: 'Price', field: 'price', filter: true, floatingFilter: true },
-    { headerName: 'Status', field: 'status', filter: true, floatingFilter: true },
     {
       headerName: 'Actions',
       field: 'actions',
@@ -114,25 +150,44 @@ const handleDialogConfirm = () => {
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
   };
+// Tab Data
+  const [value, setValue] = React.useState('1');
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
+
   return (
     <>
+
       <Grid container sx={{marginTop: "8%", marginBottom: "2%"}}>
         <Grid item xs={10} sm={10} md={10}>
           <Typography variant='h4' style={{fontFamily: 'Montserrat, sans-serif', textAlign: "left", fontWeight: "500"}}>Manage Parties</Typography>
         </Grid>
-        {/* <Grid item xs={2} sm={2} md={2} align="right">
-          <Button variant="outlined" color='customColor' startIcon={<AddCircleIcon />}>Add New</Button>
-        </Grid> */}
         <Grid item xs={12} sm={12} md={12} sx={{marginTop: "4%"}}>
-          <div className="ag-theme-alpine" style={{ height: 400, width: '100%' }}>
-            <AgGridReact
-              rowData={rowData}
-              columnDefs={columnDefs}
-              pagination={true}
-              paginationPageSize={6}
-              domLayout="autoHeight"
-            />
-          </div>
+          <Box sx={{ width: '100%', typography: 'body1' }}>
+            <TabContext value={value}>
+              <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                <TabList onChange={handleChange} aria-label="lab API tabs example">
+                  <Tab label="Approved" value="1" sx={{fontFamily: 'Montserrat, sans-serif'}} />
+                  <Tab label="Waiting For Information" value="2" sx={{fontFamily: 'Montserrat, sans-serif'}} />
+                  <Tab label="Declined Parties" value="3" sx={{fontFamily: 'Montserrat, sans-serif'}} />
+                </TabList>
+              </Box>
+              <TabPanel value="1" sx={{textAlign: "left", fontSize: "24px", fontFamily: 'Montserrat, sans-serif'}}>Approved Parties</TabPanel>
+              <TabPanel value="2" sx={{textAlign: "left", fontSize: "24px", fontFamily: 'Montserrat, sans-serif'}}>Waiting For Information</TabPanel>
+              <TabPanel value="3" sx={{textAlign: "left", fontSize: "24px", fontFamily: 'Montserrat, sans-serif'}}>Declined Parties</TabPanel>
+              <div className="ag-theme-alpine" style={{ height: 400, width: '100%' }}>
+                <AgGridReact
+                  rowData={rowData}
+                  columnDefs={columnDefs}
+                  pagination={true}
+                  paginationPageSize={6}
+                  domLayout="autoHeight"
+                />
+              </div>
+            </TabContext>
+          </Box>
         </Grid>
       </Grid> 
       <Dialog open={dialogOpen} onClose={handleDialogClose} TransitionComponent={Transition} keepMounted aria-describedby="alert-dialog-slide-description">

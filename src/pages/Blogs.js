@@ -48,18 +48,18 @@ const Blogs = () => {
     return (
         <>
             <Grid container spacing={1} sx={{marginTop: "8%", marginBottom: "4%"}} >
-                <Grid item xs={8} sm={8} md={8}>
+                <Grid item xs={6} sm={6} md={8}>
                     <Typography variant="h4" sx={{fontFamily: 'Montserrat, sans-serif', textAlign: "left", fontWeight: "500"}}>Manage Blogs</Typography>
                 </Grid>
-                <Grid item xs={2} sm={2} md={2} align="right">
+                <Grid item xs={3} sm={3} md={2} align="right">
                     <Button variant="outlined" color='customColor' onClick={handleCreate}  startIcon={<AddCircleIcon />}>Add New</Button>
                 </Grid>
-                <Grid item xs={2} sm={2} md={2} align="right">
+                <Grid item xs={3} sm={3} md={2} align="right">
                     <Button variant="outlined" color='customColor' startIcon={<HourglassEmptyIcon />}>LoadMore</Button>
                 </Grid>
             </Grid>
             <Grid container spacing={1}>
-                <Grid item xs={12} sm={4} md={4}>
+                <Grid item xs={12} sm={6} md={4}>
                     <Card sx={{ maxWidth: "100%" }}>
                         <CardMedia
                             component="img"
@@ -84,7 +84,7 @@ const Blogs = () => {
                         </CardActions>
                     </Card>
                 </Grid>
-                <Grid item xs={12} sm={4} md={4}>
+                <Grid item xs={12} sm={6} md={4}>
                     <Card sx={{ maxWidth: "100%" }}>
                         <CardMedia
                             component="img"
@@ -109,7 +109,7 @@ const Blogs = () => {
                         </CardActions>
                     </Card>
                 </Grid>
-                <Grid item xs={12} sm={4} md={4}>
+                <Grid item xs={12} sm={6} md={4}>
                     <Card sx={{ maxWidth: "100%" }}>
                         <CardMedia
                             component="img"

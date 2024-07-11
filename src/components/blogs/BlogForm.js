@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { Button, TextField, Paper, Box, Typography, Input, InputAdornment, FormControl, FormHelperText, Grid
-    , Snackbar, Alert, MenuItem, Chip, OutlinedInput, IconButton  } from '@mui/material';
+import { useParams } from 'react-router-dom';
+import { Button,  Box, Typography, Input, FormControl, FormHelperText, Grid, Snackbar, Alert, IconButton  } from '@mui/material';
 import { AddAPhoto, Delete } from '@mui/icons-material';
 const initialTemplates = [
     { id: 1, title: 'Important Announcment', short_desc: "Lorem ipsum dolor sit amet, consectetur adipiscing el", description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet accumsan enim. Aliquam erat volutpat. Proin eu eros in lacus iaculis fringilla. Maecenas non consequat tortor. Aliquam varius in dui nec malesuada. Nulla sed sapien id mi malesuada eleifend. Morbi felis ligula, venenatis ac turpis quis, sodales vehicula massa. Ut tincidunt magna quis erat tempus, ac gravida magna blandit. Nulla facilisi. Vivamus id condimentum libero, ut elementum purus.' },
@@ -9,7 +8,6 @@ const initialTemplates = [
 
 const BlogForm = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
   const [template, setTemplate] = useState({ name: '', subject: '', body: '', type: '' });
   const [isEditMode, setIsEditMode] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
