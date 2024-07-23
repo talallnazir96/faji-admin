@@ -19,30 +19,30 @@ const data = [
 
 const TotalSalesCard = () => {
   return (
-    <Card sx={{ minWidth: 275 }}>
-      <CardContent>
-        <Typography variant="h5" component="div">
-          Users Registered
-        </Typography>
-        <Typography sx={{ mb: 1.5 }} color="text.secondary">
-          Last Year
-        </Typography>
-        <Box sx={{ height: 200 }}>
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-              data={data}
-              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="sales" fill="#FD99C9" />
-            </BarChart>
-          </ResponsiveContainer>
-        </Box>
-      </CardContent>
-    </Card>
+    <Card >
+    <CardContent>
+      <Typography variant="h5" component="div">
+        Users Registered
+      </Typography>
+      <Typography sx={{ mb: 1.5 }} color="text.secondary">
+        Last Year
+      </Typography>
+      <Box sx={{ height: { xs: 200, sm: 250, md: 300, lg: 350,xl: 500 } }}>
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart
+            data={data}
+            // margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Bar dataKey="sales" fill="#FD99C9" />
+          </BarChart>
+        </ResponsiveContainer>
+      </Box>
+    </CardContent>
+  </Card>
   );
 }
 

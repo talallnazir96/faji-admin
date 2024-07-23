@@ -3,6 +3,7 @@ import { Typography, Grid ,TextField, Button , Dialog, DialogActions, DialogCont
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
+import {  useMediaQuery, useTheme } from '@mui/material';
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
   });
@@ -76,6 +77,21 @@ const auditLogs = [
     
 ];
 const Reports = () => {
+    const theme = useTheme();
+  const isXs = useMediaQuery(theme.breakpoints.only('xs'));
+  const isSm = useMediaQuery(theme.breakpoints.only('sm'));
+  const isMd = useMediaQuery(theme.breakpoints.only('md'));
+  const isLg = useMediaQuery(theme.breakpoints.only('lg'));
+  const isXl = useMediaQuery(theme.breakpoints.only('xl'));
+
+  const getVariant = () => {
+    if (isXs) return 'h5';
+    if (isSm) return 'h5';
+    if (isMd) return 'h4';
+    if (isLg) return 'h4';
+    if (isXl) return 'h3';
+    return 'body1'; // Default variant
+  };
     const [dialogOpen, setDialogOpen] = useState(false);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
@@ -147,11 +163,11 @@ const Reports = () => {
       };
     return (
         <>
-        <Grid container spacing={3}  sx={{marginTop: "8%", marginBottom: "2%"}}>
+        <Grid container spacing={3}  sx={{marginTop: "9%", marginBottom: "2%"}}>
             <Grid item xs={10} sm={10} md={10}>
-          <Typography variant='h4' style={{fontFamily: 'Montserrat, sans-serif', textAlign: "left", fontWeight: "500"}}>Escalations & Reports</Typography>
-        </Grid>
-            <Grid item xs={12} md={12}>
+          <Typography variant={getVariant()} style={{fontFamily: 'Montserrat, sans-serif', textAlign: "left", fontWeight: "500"}}>Escalations & Reports</Typography>
+            </Grid>
+            <Grid item xs={12} md={12} >
                 <div className="ag-theme-alpine" style={{ height: '500px', width: '100%' }}>
                     <AgGridReact
                         columnDefs={columnDefs}

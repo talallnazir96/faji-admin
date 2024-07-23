@@ -5,8 +5,24 @@ import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import { useMediaQuery, useTheme } from '@mui/material';
 import {Link} from "react-router-dom";
 function Tickets() {
+  const theme = useTheme();
+  const isXs = useMediaQuery(theme.breakpoints.only('xs'));
+  const isSm = useMediaQuery(theme.breakpoints.only('sm'));
+  const isMd = useMediaQuery(theme.breakpoints.only('md'));
+  const isLg = useMediaQuery(theme.breakpoints.only('lg'));
+  const isXl = useMediaQuery(theme.breakpoints.only('xl'));
+
+  const getVariant = () => {
+    if (isXs) return 'h5';
+    if (isSm) return 'h5';
+    if (isMd) return 'h4';
+    if (isLg) return 'h4';
+    if (isXl) return 'h3';
+    return 'body1'; // Default variant
+  };
   const [rowData] = useState([
     { tId: '1234', eventName: 'Party A', userName: 'John Doe', date: '2024-07-15', price: '$50', pCode: '-' },
     { tId: '1235', eventName: 'Party B', userName: 'Jacky', date: '2024-07-15', price: '$50', pCode: 'ABC12#' },
@@ -58,9 +74,9 @@ function Tickets() {
   };
   return (
     <>
-      <Grid container sx={{marginTop: "8%", marginBottom: "2%"}}>
+      <Grid container sx={{marginTop: "9%", marginBottom: "2%"}}>
         <Grid item xs={10} sm={10} md={10}>
-          <Typography variant='h4' style={{fontFamily: 'Montserrat, sans-serif', textAlign: "left", fontWeight: "500"}}>Manage Tickets</Typography>
+          <Typography variant={getVariant()} style={{fontFamily: 'Montserrat, sans-serif', textAlign: "left", fontWeight: "500"}}>Manage Tickets</Typography>
         </Grid>
         <Grid item xs={12} sm={12} md={12} sx={{marginTop: "4%"}}>
           <div className="ag-theme-alpine" style={{ height: 400, width: '100%' }}>

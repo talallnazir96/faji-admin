@@ -2,6 +2,7 @@ import React from 'react';
 import { Grid, Typography, Card, CardContent, Box } from '@mui/material';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import CountUp from 'react-countup';
+import { useMediaQuery, useTheme } from '@mui/material';
 const data = [
     { day: '1', sales: 1250 },
     { day: '2', sales: 1080 },
@@ -35,12 +36,28 @@ const data = [
     { day: '30', sales: 6321 }
   ];
 const Finance = () => {
+   const theme = useTheme();
+  const isXs = useMediaQuery(theme.breakpoints.only('xs'));
+  const isSm = useMediaQuery(theme.breakpoints.only('sm'));
+  const isMd = useMediaQuery(theme.breakpoints.only('md'));
+  const isLg = useMediaQuery(theme.breakpoints.only('lg'));
+  const isXl = useMediaQuery(theme.breakpoints.only('xl'));
+
+  const getVariant = () => {
+    if (isXs) return 'h5';
+    if (isSm) return 'h5';
+    if (isMd) return 'h4';
+    if (isLg) return 'h4';
+    if (isXl) return 'h3';
+    return 'body1'; // Default variant
+  };
   return (
     <>
-      <Typography variant='h4' style={{fontFamily: 'Montserrat, sans-serif', marginTop: "8%", marginBottom: "2%", textAlign: "left", fontWeight: "500"}}>Financial Overview</Typography>
+      <Typography variant={getVariant()} style={{fontFamily: 'Montserrat, sans-serif', marginTop: "9%",  textAlign: "left", fontWeight: "500"}}>Financial Overview</Typography>
       <Grid container spacing={3} sx={{marginTop: "4%"}} >
         <Grid item xs={12} sm={12} md={4}>
-            <Card sx={{ fontFamily: 'Montserrat, sans-serif', padding: "2%" }}>
+            <Card sx={{ fontFamily: 'Montserrat, sans-serif', padding: "2%"
+             }}>
                 <CardContent>
                     <Typography variant="h6" align="left">Total Revenue</Typography>
                     <Typography variant="h4" align="left" sx={{ marginTop: "5%"}}>
@@ -60,7 +77,7 @@ const Finance = () => {
             </Card>
         </Grid>
         <Grid item xs={12} sm={12} md={8}>
-            <Card sx={{ minWidth: 275, fontFamily: 'Montserrat, sans-serif' }}>
+            <Card sx={{  fontFamily: 'Montserrat, sans-serif'}}>
                 <CardContent>
                     <Typography variant="h6" component="div">
                     Revenue
@@ -86,7 +103,7 @@ const Finance = () => {
             </Card>
         </Grid>
         <Grid item xs={12} sm={12} md={8}>
-            <Card sx={{ minWidth: "100%" }}>
+            <Card >
                 <CardContent>
                     <Typography variant="h6" component="div">
                     Host Payouts
@@ -111,8 +128,8 @@ const Finance = () => {
                 </CardContent>
             </Card>
         </Grid>
-        <Grid item xs={12} sm={12} md={4}>
-            <Card sx={{ fontFamily: 'Montserrat, sans-serif', padding: "2%" }}>
+        <Grid item xs={12} spacing={2} sm={12} md={4}>
+            <Card sx={{ fontFamily: 'Montserrat, sans-serif', padding: "2%"}}>
                 <CardContent>
                     <Typography variant="h6" align="left">Total Hosts Payments</Typography>
                     <Typography variant="h4" align="left" sx={{ marginTop: "5%"}}>

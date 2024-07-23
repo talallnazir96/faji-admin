@@ -30,6 +30,7 @@ import BlogForm from './components/blogs/BlogForm';
 import Finance from './pages/Finance';
 import Audit from './pages/Audit';
 import Reports from './pages/Reports';
+import { Paper } from '@mui/material';
 
 function App() {
   // const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -66,13 +67,13 @@ function App() {
             <Navbar isLoggedIn={isLoggedIn} onLogout={handleLogout}  />
           </>
         )}
-          <Grid container spacing={3}>
+          <Grid container spacing={2}>
             {isLoggedIn && (
               <>
-                <Grid item  xs={3} sm={3} md={3}>
-                  <Sidebar onLogout={handleLogout} />
+                <Grid item  xs={12} sm={3} md={3} >
+                 <Sidebar  onLogout={handleLogout} />
                 </Grid>
-                <Grid item xs={9} sm={8} md={8}>
+                <Grid item  xs={12} sm={9} md={9}>
                   <div className="main-content">
                     <BackgroundUpdater /> 
                     <Routes>

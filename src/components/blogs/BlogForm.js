@@ -65,13 +65,13 @@ const BlogForm = () => {
     setSnackbarOpen(false);
   };
   return (
-    <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexWrap: 'wrap', margin: "8% auto 2%", width: "80%" }}>
+    <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexWrap: 'wrap', margin: "8% auto 2%"}}>
         <Grid container spacing={2}>
             <Grid item xs={12} sm={12} md={12}>
                 <Typography variant="h4" sx={{fontFamily: 'Montserrat, sans-serif', textAlign: "left", fontWeight: "500"}}>{isEditMode ? "Update Post" : "Create New Post"}</Typography>
             </Grid>
         </Grid>
-        <Grid container sx={{border: "1px solid #eee", borderRadius: "10px", marginTop: "4%", padding: "2%"}} spacing={1}>
+        <Grid container sx={{border: "1px solid #eee", borderRadius: "10px", marginTop: "4%", padding: "2%", }} spacing={1}>
             <Grid item xs={12} sm={12} md={12}>
             <Typography variant="h6" sx={{fontFamily: 'Montserrat, sans-serif', textAlign: "left", fontWeight:"400"}}>Basic Details</Typography>
                 <FormControl variant="standard" sx={{ m: 1, mt: 3, width: "90%" }}>

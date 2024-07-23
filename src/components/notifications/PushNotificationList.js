@@ -58,7 +58,7 @@ const handleDialogConfirm = () => {
     <>
     <Grid container sx={{marginTop: "8%", marginBottom: "2%"}}>
         <Grid item xs={8} sm={8} md={10}>
-            <Typography variant="h4" sx={{fontFamily: 'Montserrat, sans-serif', textAlign: "left", fontWeight: "500"}}>Manage Application Notifications</Typography>
+            <Typography variant="h5" sx={{fontFamily: 'Montserrat, sans-serif', textAlign: "left", fontWeight: "500"}}>Manage Application Notifications</Typography>
         </Grid>
         <Grid item xs={4} sm={4} md={2} align="right">
           <Button  onClick={handleCreate} variant="outlined" color='customColor' startIcon={<AddCircleIcon />}>Add New</Button>

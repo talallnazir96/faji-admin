@@ -10,11 +10,27 @@ import { Link } from 'react-router-dom';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
+import {useMediaQuery, useTheme } from '@mui/material';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 function Users() {
+  const theme = useTheme();
+  const isXs = useMediaQuery(theme.breakpoints.only('xs'));
+  const isSm = useMediaQuery(theme.breakpoints.only('sm'));
+  const isMd = useMediaQuery(theme.breakpoints.only('md'));
+  const isLg = useMediaQuery(theme.breakpoints.only('lg'));
+  const isXl = useMediaQuery(theme.breakpoints.only('xl'));
+
+  const getVariant = () => {
+    if (isXs) return 'h4';
+    if (isSm) return 'h5';
+    if (isMd) return 'h4';
+    if (isLg) return 'h4';
+    if (isXl) return 'h3';
+    return 'body1'; // Default variant
+  };
   const [rowData] = useState([
     { id: 1, name: 'Dummy', email: 'abc@gmail.com', user_role: 'Organizer', registeration_date: '2024-07-15', status: 'active', tickets_purchased: '20'},
     { id: 2, name: 'Dummy', email: 'abc@gmail.com', user_role: 'Organizer', registeration_date: '2024-07-15', status: 'active', tickets_purchased: '10'},
@@ -102,9 +118,9 @@ const handleDialogConfirm = () => {
   };
   return (
     <>
-      <Grid container sx={{marginTop: "8%", marginBottom: "2%"}}>
+      <Grid container sx={{marginTop: "9%", marginBottom: "2%"}}>
         <Grid item xs={8} sm={8} md={10}>
-          <Typography variant='h4' style={{fontFamily: 'Montserrat, sans-serif', textAlign: "left", fontWeight: "500"}}>Manage Users</Typography>
+          <Typography variant={getVariant()} style={{fontFamily: 'Montserrat, sans-serif', textAlign: "left", fontWeight: "500"}}>Manage Users</Typography>
         </Grid>
         <Grid item xs={4} sm={4} md={2} align="right">
           <Button component={Link} to="/users/add-user" variant="outlined" color='customColor' startIcon={<AddCircleIcon />}>Add New</Button>
@@ -113,7 +129,8 @@ const handleDialogConfirm = () => {
           <Box sx={{ width: '100%', typography: 'body1' }}>
             <TabContext value={value}>
               <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                <TabList onChange={handleChange} aria-label="lab API tabs example">
+                <TabList onChange={handleChange} aria-label="lab API tabs example" variant="scrollable" // Ensure tabs are scrollable on smaller screens
+            scrollButtons="auto" >
                   <Tab label="Admin" value="1" sx={{fontFamily: 'Montserrat, sans-serif'}} />
                   <Tab label="Organizers or Hosts" value="2" sx={{fontFamily: 'Montserrat, sans-serif'}} />
                   <Tab label="Attendees" value="3" sx={{fontFamily: 'Montserrat, sans-serif'}} />

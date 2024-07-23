@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import {TextField, Box, Button, Typography, Input, InputAdornment, FormControl, FormHelperText, Grid
     , Snackbar, Alert, MenuItem, Chip, OutlinedInput
 } from '@mui/material';
+import { useMediaQuery, useTheme } from '@mui/material';
 
 const role = [
     {
@@ -28,6 +29,21 @@ const status = [
     }
   ];
 const AddUser = () => {
+    const theme = useTheme();
+  const isXs = useMediaQuery(theme.breakpoints.only('xs'));
+  const isSm = useMediaQuery(theme.breakpoints.only('sm'));
+  const isMd = useMediaQuery(theme.breakpoints.only('md'));
+  const isLg = useMediaQuery(theme.breakpoints.only('lg'));
+  const isXl = useMediaQuery(theme.breakpoints.only('xl'));
+
+  const getVariant = () => {
+    if (isXs) return 'h6';
+    if (isSm) return 'h5';
+    if (isMd) return 'h4';
+    if (isLg) return 'h3';
+    if (isXl) return 'h2';
+    return 'body1'; // Default variant
+  };
     const [selectedItems, setSelectedItems] = useState([]);
 
     const [formData, setFormData] = useState({
@@ -62,7 +78,7 @@ const AddUser = () => {
     <div>
         <Grid container spacing={2}>
             <Grid item xs={12} sm={12} md={12}>
-                <Typography variant="h4" sx={{fontFamily: 'Montserrat, sans-serif', textAlign: "left", fontWeight: "500"}}>Edit User</Typography>
+                <Typography variant={getVariant()} sx={{fontFamily: 'Montserrat, sans-serif', textAlign: "left", fontWeight: "500"}}>Edit User</Typography>
             </Grid>
 
             <Grid item xs={12} sm={6} md={6}>

@@ -53,11 +53,11 @@ const EditPromo = () => {
         setSnackbarOpen(false);
       };
   return (
-    <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexWrap: 'wrap', margin: "8% auto 2%", width: "80%" }}>
+    <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexWrap: 'wrap', margin: "8% auto 2%", width: "100%" }}>
     <div>
         <Grid container spacing={2}>
             <Grid item xs={12} sm={12} md={12}>
-                <Typography variant="h4" sx={{fontFamily: 'Montserrat, sans-serif', textAlign: "left", fontWeight: "500"}}>Update Promocode Details</Typography>
+                <Typography variant="h5" sx={{fontFamily: 'Montserrat, sans-serif', textAlign: "left", fontWeight: "500"}}>Update Promocode Details</Typography>
             </Grid>
 
             <Grid item xs={12} sm={6} md={6}>

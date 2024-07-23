@@ -9,10 +9,26 @@ import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 import Image from "../assets/event.jpg"
 import { useNavigate } from 'react-router-dom';
 import DeleteIcon from "@mui/icons-material/Delete";
+import { useMediaQuery, useTheme } from '@mui/material';
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
   });
 const Blogs = () => {
+    const theme = useTheme();
+  const isXs = useMediaQuery(theme.breakpoints.only('xs'));
+  const isSm = useMediaQuery(theme.breakpoints.only('sm'));
+  const isMd = useMediaQuery(theme.breakpoints.only('md'));
+  const isLg = useMediaQuery(theme.breakpoints.only('lg'));
+  const isXl = useMediaQuery(theme.breakpoints.only('xl'));
+
+  const getVariant = () => {
+    if (isXs) return 'h5';
+    if (isSm) return 'h5';
+    if (isMd) return 'h4';
+    if (isLg) return 'h4';
+    if (isXl) return 'h3';
+    return 'body1'; // Default variant
+  };
     const navigate = useNavigate();
     const [dialogOpen, setDialogOpen] = useState(false);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -47,18 +63,23 @@ const Blogs = () => {
 
     return (
         <>
-            <Grid container spacing={1} sx={{marginTop: "8%", marginBottom: "4%"}} >
-                <Grid item xs={6} sm={6} md={8}>
-                    <Typography variant="h4" sx={{fontFamily: 'Montserrat, sans-serif', textAlign: "left", fontWeight: "500"}}>Manage Blogs</Typography>
+            <Grid container spacing={2} sx={{marginTop: "9%", marginBottom: "4%",  display: 'flex',flexDirection: 'row', justifyContent: 'space-between' ,
+            }} >
+                <Grid item xs={6} sm={6} md={8} lg={8}>
+                    <Typography variant={getVariant()} sx={{fontFamily: 'Montserrat, sans-serif', textAlign: "left", fontWeight: "500"}}>Manage Blogs</Typography>
                 </Grid>
-                <Grid item xs={3} sm={3} md={2} align="right">
-                    <Button variant="outlined" color='customColor' onClick={handleCreate}  startIcon={<AddCircleIcon />}>Add New</Button>
+                <Grid item xs={6}  sx={{display: {xs:'flex'},gap:{xs:"4%",sm:"20%",lg:"15%" }}} sm={6} md={2} lg={4} align="right">
+                    <Button   variant="outlined" color='customColor' sx={{fontSize:"10px"}}  onClick={handleCreate}  startIcon={<AddCircleIcon />}>Add
+                    New</Button>
+                    <Button size="small" onClick={() => handleEdit(1)} sx={{fontSize:"10px"}} variant="outlined" color='customColor'><HourglassEmptyIcon   sx={{fontSize: "14px", marginRight: "5px"}}/> Load More</Button>
+                    {/* <Button  variant="outlined" color='customColor' sx={{fontSize:"8px",paddingLeft:"40px"}}    startIcon={<HourglassEmptyIcon  size="small"/>}  >LoadMore</Button> */}
                 </Grid>
-                <Grid item xs={3} sm={3} md={2} align="right">
-                    <Button variant="outlined" color='customColor' startIcon={<HourglassEmptyIcon />}>LoadMore</Button>
-                </Grid>
+                {/* <Grid item xs={4} sm={4} md={2} align="right">
+                    
+                </Grid> */}
+               
             </Grid>
-            <Grid container spacing={1}>
+            <Grid container spacing={1} >
                 <Grid item xs={12} sm={6} md={4}>
                     <Card sx={{ maxWidth: "100%" }}>
                         <CardMedia

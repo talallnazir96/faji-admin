@@ -15,6 +15,7 @@ body {
   margin-top: 2%;
   padding-left: 1vw;
   padding-right: 2vw;
+  
 }
 .sidebar::-webkit-scrollbar {
   width: 5px;
@@ -98,13 +99,35 @@ body {
   .view_event_ticket {
     width: 100% !important; 
   }
-  .sidebar .sidebarText {
-    display: none;
-  }
-  .sidebar {
-    width: 15vw;
-  }
+ 
+.sidebar{
+  width:15vw;
+  margin-top: 2%;
+}
+  
   .MuiGrid-root.MuiGrid-container.MuiGrid-spacing-xs-3.css-zow5z4-MuiGrid-root {
     margin-top: 5%;
   }
 }
+@media (max-width: 768px) {
+  .sidebar {
+    width: 26vw;    
+    padding-top: 4vw;
+    margin-top: 2%;
+    padding-left: 2vw;
+    padding-right: 2vw;
+    
+  }
+
+  .sidebar a, .sidebar svg {
+    font-size: 18px; 
+  }
+
+  .sidebar .sidebarText span {
+    font-size: 12px !important; 
+  }
+}
+
+  
+ 
+ 

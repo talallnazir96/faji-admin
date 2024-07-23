@@ -8,10 +8,26 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import EditIcon from '@mui/icons-material/Edit';
 import { Link } from 'react-router-dom'; 
+import {  useMediaQuery, useTheme } from '@mui/material';
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 function PromoCode() {
+  const theme = useTheme();
+  const isXs = useMediaQuery(theme.breakpoints.only('xs'));
+  const isSm = useMediaQuery(theme.breakpoints.only('sm'));
+  const isMd = useMediaQuery(theme.breakpoints.only('md'));
+  const isLg = useMediaQuery(theme.breakpoints.only('lg'));
+  const isXl = useMediaQuery(theme.breakpoints.only('xl'));
+
+  const getVariant = () => {
+    if (isXs) return 'h5';
+    if (isSm) return 'h5';
+    if (isMd) return 'h4';
+    if (isLg) return 'h4';
+    if (isXl) return 'h3';
+    return 'body1'; // Default variant
+  };
   const [rowData] = useState([
     { id: 1, code: '123ABD!@', applicable_events: "Party A, Party B", expiry_date: '2024-07-15', discount_val: '10%'},
     { id: 2, code: '123ABD!@', applicable_events: "Party A, Party B", expiry_date: '2024-07-15', discount_val: '10%'},
@@ -93,9 +109,9 @@ const handleDialogConfirm = () => {
   };
   return (
     <>
-      <Grid container sx={{marginTop: "8%", marginBottom: "2%"}}>
+      <Grid container sx={{marginTop: "9%", marginBottom: "2%"}}>
         <Grid item xs={8} sm={8} md={10}>
-          <Typography variant='h4' style={{fontFamily: 'Montserrat, sans-serif', textAlign: "left", fontWeight: "500"}}>Manage Promocodes</Typography>
+          <Typography variant={getVariant()}  style={{fontFamily: 'Montserrat, sans-serif', textAlign: "left", fontWeight: "500"}}>Manage Promocodes</Typography>
         </Grid>
         <Grid item xs={4} sm={4} md={2} align="right">
           <Button component={Link} to="/promo/add-promo" variant="outlined" color='customColor' startIcon={<AddCircleIcon />}>Add New</Button>
@@ -133,7 +149,7 @@ const handleDialogConfirm = () => {
                 >
                 {snackbarMessage}
             </Alert>
-        </Snackbar>  
+        </Snackbar> 
     </>
   );
 }

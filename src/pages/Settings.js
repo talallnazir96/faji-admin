@@ -2,11 +2,27 @@ import React, { useState, useEffect } from 'react';
 import { useParams} from 'react-router-dom';
 import { Button, Box, Typography, Input, FormControl, FormHelperText, Grid
     , Snackbar, Alert } from '@mui/material';
+    import { useMediaQuery, useTheme } from '@mui/material';
 const initialTemplates = [
     { id: 1, title: 'FAJI App', short_desc: 'Organize your events smoothly', phone_num: '+1726788954', email: 'faji@outlook.com', currency: '$' },
   ];
 
 const Settings = () => {
+    const theme = useTheme();
+  const isXs = useMediaQuery(theme.breakpoints.only('xs'));
+  const isSm = useMediaQuery(theme.breakpoints.only('sm'));
+  const isMd = useMediaQuery(theme.breakpoints.only('md'));
+  const isLg = useMediaQuery(theme.breakpoints.only('lg'));
+  const isXl = useMediaQuery(theme.breakpoints.only('xl'));
+
+  const getVariant = () => {
+    if (isXs) return 'h5';
+    if (isSm) return 'h5';
+    if (isMd) return 'h4';
+    if (isLg) return 'h4';
+    if (isXl) return 'h3';
+    return 'body1'; // Default variant
+  };
   const  id  = 1;
 
   const [template, setTemplate] = useState({ title: '', short_desc: '', phone_num: '', email: '', currency: '' });
@@ -53,10 +69,10 @@ const Settings = () => {
     setSnackbarOpen(false);
   };
   return (
-    <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexWrap: 'wrap', margin: "8% auto 2%", width: "80%" }}>
+    <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexWrap: 'wrap', margin: "9% auto 2%" }}>
         <Grid container spacing={2}>
             <Grid item xs={12} sm={12} md={12}>
-                <Typography variant="h4" sx={{fontFamily: 'Montserrat, sans-serif', textAlign: "left", fontWeight: "500"}}>Application Settings</Typography>
+                <Typography variant={getVariant()} sx={{fontFamily: 'Montserrat, sans-serif', textAlign: "left", fontWeight: "500"}}>Application Settings</Typography>
             </Grid>
         </Grid>
         <Grid container sx={{border: "1px solid #eee", borderRadius: "10px", marginTop: "4%", padding: "2%"}} spacing={1}>

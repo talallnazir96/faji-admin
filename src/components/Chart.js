@@ -14,19 +14,19 @@ const data = [
 
 const ChartCard = () => {
   return (
-    <Card sx={{ minWidth: 275, fontFamily: 'Montserrat, sans-serif' }}>
+    <Card sx={{ Width: "100%" ,  fontFamily: 'Montserrat, sans-serif'}}>
       <CardContent>
-        <Typography variant="h5" component="div">
+        <Typography variant="h6" component="div" >
           Parties Requests
         </Typography>
         <Typography sx={{ mb: 1.5 }} color="text.secondary">
           Last Week
         </Typography>
         <Box sx={{ height: 200 }}>
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer >
             <LineChart
               data={data}
-              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+              
             >
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" />

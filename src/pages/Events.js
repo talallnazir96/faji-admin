@@ -11,10 +11,27 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
 import { Link } from 'react-router-dom'; 
+import { useMediaQuery, useTheme } from '@mui/material';
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 function Events() {
+
+  const theme = useTheme();
+  const isXs = useMediaQuery(theme.breakpoints.only('xs'));
+  const isSm = useMediaQuery(theme.breakpoints.only('sm'));
+  const isMd = useMediaQuery(theme.breakpoints.only('md'));
+  const isLg = useMediaQuery(theme.breakpoints.only('lg'));
+  const isXl = useMediaQuery(theme.breakpoints.only('xl'));
+
+  const getVariant = () => {
+    if (isXs) return 'h5';
+    if (isSm) return 'h5';
+    if (isMd) return 'h4';
+    if (isLg) return 'h4';
+    if (isXl) return 'h3';
+    return 'body1'; // Default variant
+  };
   const [rowData] = useState([
     { id: 1, title: 'Party A', date: '2024-07-10', time: '18:00', seats: 100, location: 'Location A', price: '$50', status: 'Approved' },
     { id: 2,title: 'Party B', date: '2024-07-15', time: '20:00', seats: 200, location: 'Location B', price: '$75', status: 'Declined' },
@@ -160,15 +177,25 @@ const handleDialogConfirm = () => {
   return (
     <>
 
-      <Grid container sx={{marginTop: "8%", marginBottom: "2%"}}>
+      <Grid container sx={{marginTop: {md:"9%",sm:"13%"}, marginBottom: "2%"}}>
         <Grid item xs={10} sm={10} md={10}>
-          <Typography variant='h4' style={{fontFamily: 'Montserrat, sans-serif', textAlign: "left", fontWeight: "500"}}>Manage Parties</Typography>
+          <Typography variant={getVariant()}  style={{fontFamily: 'Montserrat, sans-serif', textAlign: "left", fontWeight: "500"}}>Manage Parties</Typography>
         </Grid>
         <Grid item xs={12} sm={12} md={12} sx={{marginTop: "4%"}}>
-          <Box sx={{ width: '100%', typography: 'body1' }}>
+          <Box   sx={{
+        width: {
+          xs: '100%', // For extra small screens (mobile)
+          sm: '100%', // For small screens (tablet)
+          md: '100%', // For medium screens (small desktops)
+          lg: '100%', // For large screens (desktops)
+          xl: '100%', // For extra large screens
+        },
+        typography: 'body1',
+      }}>
             <TabContext value={value}>
               <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                <TabList onChange={handleChange} aria-label="lab API tabs example">
+                <TabList onChange={handleChange} aria-label="lab API tabs example"   variant="scrollable" // Ensure tabs are scrollable on smaller screens
+            scrollButtons="auto" >
                   <Tab label="Approved" value="1" sx={{fontFamily: 'Montserrat, sans-serif'}} />
                   <Tab label="Waiting For Information" value="2" sx={{fontFamily: 'Montserrat, sans-serif'}} />
                   <Tab label="Declined Parties" value="3" sx={{fontFamily: 'Montserrat, sans-serif'}} />
