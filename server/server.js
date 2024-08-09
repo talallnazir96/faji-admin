@@ -15,17 +15,14 @@ const reportsRoutes = require("./router/report_route");
 const emailsRoutes = require("./router/emailTemplate_route");
 const notificationsRoutes = require("./router/notification_route");
 const errorMiddleware = require("./middlewares/error-middleware");
+const Notification = require("./models/sendNotification_model");
+const socketIo = require("socket.io");
+const http = require("http");
 const cors = require("cors");
 const PORT = 5000;
-// const webpush = require('web-push');
-
-// const vapidKeys = webpush.generateVAPIDKeys();
-// console.log(vapidKeys);
-// webpush.setVapidDetails(
-//   'mailto:asmasiddique@gmail.com',
-//   'BBTVrh3ew_SR34r-qbv50Z8It1OuLlrGzo8hpvBbgA9YxqCs-i6pLQFVTsxu8pU5S6ycgNpL6J-6mV9CHW3OEj0',
-//   'aT0JvegMelIqz96Fn03XjlN0DKKVkLAQ6GVH6OeYA7s'
-// );
+const server = http.createServer(app);
+// console.log(server);
+const io = socketIo(server);
 //MiddleWare
 app.use(cors());
 app.use(express.json());
@@ -54,7 +51,61 @@ app.use("/api/reports", reportsRoutes);
 app.use("/api/email-templates", emailsRoutes);
 
 app.use("/api/app-notifications", notificationsRoutes);
+// Handle client connection
+io.on("connection", (socket) => {
+  console.log("A user connected");
 
+  socket.on("disconnect", () => {
+    console.log("A user disconnected");
+  });
+});
+app.post("/api/app-notifications/send-notification/:id", async (req, res) => {
+  const { id } = req.params;
+  console.log(id);
+
+  try {
+    const { notification_id, title, date, type, description } = req.body;
+    // 1. Log notification received
+    console.log("Notification received:", {
+      notification_id,
+      title,
+      date,
+      type,
+      description,
+    });
+
+    // Send notification via socket.io
+    io.emit("receiveNotification", { title, description });
+    console.log("Notification sent to clients via Socket.io.");
+
+
+
+    // Save notification to the database
+    const notification = new Notification({
+      id: req.params,
+      notification_id,
+      title,
+      date,
+      type,
+      description,
+    });
+
+    const savedNotification = await notification.save();
+    // Respond with the saved notification
+    // res.status(201).json(savedNotification);
+    console.log("Notification saved to database.");
+
+
+    //  Send response back to client
+    res
+      .status(201)
+      .json({ message: "Notification sent and saved successfully" });
+    
+  } catch (error) {
+    console.error("Error sending or saving notification:", error);
+    res.status(500).json({ message: "Error sending or saving notification",details:error.message });
+  }
+});
 
 //Connection with DB
 

@@ -5,6 +5,8 @@ const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const { hashPassword, comparePassword } = require("../secure/hashPassword");
+
+
 // *******************
 // SIGN UP LOGIC
 // *******************
@@ -105,7 +107,7 @@ exports.forgetPassword = async (req, res) => {
     }
     const secret = process.env.JWT_SECRET_KEY;
     const token = jwt.sign({ email }, secret, {
-      expiresIn: "2h",
+      expiresIn: "30d",
     });
     const link = `Click on this link to generate your new password/${process.env.CLIENT_URL}/reset-password/${token}`;
     const transporter = nodemailer.createTransport({

@@ -10,7 +10,7 @@ const BlogSchema = new mongoose.Schema({
       required: true
     },
     imageUrl: {
-      type: Buffer,
+      type: String,
       required: true
     },
     createdAt: {

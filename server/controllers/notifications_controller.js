@@ -89,3 +89,4 @@ exports.deleteNotification = async (req, res) => {
       .json({ error: "Error deleting notification", details: err.message });
   }
 };
+
