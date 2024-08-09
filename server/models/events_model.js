@@ -18,6 +18,7 @@ const eventsSchema = new mongoose.Schema({
     type: String,
     status: { type: String, default: "pending" }, // 'pending', 'approved', 'declined'
   },
+  
   reason: { type: String },
   seats: {
     type: Number,

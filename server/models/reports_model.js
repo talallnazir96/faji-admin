@@ -30,5 +30,13 @@ const reportSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  action:{
+    type:String,
+    action: { type: String, default: "Marked as Spam" }, //Marked as Spam,Request info,Declined
+  },
+  requestedDetails:{
+    type:String,
+    required: true
+  }
 });
 module.exports = mongoose.model("reports", reportSchema);

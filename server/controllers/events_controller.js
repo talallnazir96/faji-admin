@@ -1,6 +1,6 @@
 const Event = require("../models/events_model");
+const User = require("../models/user_model");
 const eventValidationSchema = require("../validators/event_Validators");
-
 
 // *****************
 // Get All  events
@@ -24,12 +24,14 @@ exports.getEventById = async (req, res) => {
   try {
     const event = await Event.findById(id);
     if (!event) {
-      return res.status(404).json({ error: 'Event not found' });
+      return res.status(404).json({ error: "Event not found" });
     }
     res.status(200).json(event);
   } catch (err) {
-    console.error('Error fetching event:', err);
-    res.status(500).json({ error: 'Error fetching event', details: err.message });
+    console.error("Error fetching event:", err);
+    res
+      .status(500)
+      .json({ error: "Error fetching event", details: err.message });
   }
 };
 // *****************
@@ -41,7 +43,8 @@ exports.createEvent = async (req, res) => {
   const { error } = eventValidationSchema.validate(req.body);
   if (error) return res.status(400).json({ error: error.details[0].message });
 
-  const { eventTitle, date, time, seats, location, price,description } = req.body;
+  const { eventTitle, date, time, seats, location, price, description } =
+    req.body;
   const newEvent = await new Event({
     eventTitle,
     date,
@@ -49,7 +52,7 @@ exports.createEvent = async (req, res) => {
     seats,
     location,
     price,
-    description
+    description,
   });
 
   try {
@@ -132,5 +135,56 @@ exports.deleteEvent = async (req, res) => {
     res
       .status(500)
       .json({ error: "Error deleting event", details: err.message });
+  }
+};
+
+// *******************************
+// GET /api/events?status=upcoming
+// *******************************
+exports.eventsStatus = async (req, res) => {
+  const { status } = req.query;
+  try {
+    if (status === "upcoming") {
+      events = await Event.find({ date: { $gte: new Date() } });
+    } else if (status === "expired") {
+      events = await Event.find({ date: { $lt: new Date() } });
+    } else {
+      events = await Event.find({});
+    }
+
+    res.status(200).json(events);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+// *******************************
+// Events Stats
+// *******************************
+exports.eventsStats= async (req, res) => {
+  try {
+      const totalTicketsSold = await User.aggregate([{ $group: { _id: null, total: { $sum: '$ticketsPurchased' } } }]);
+
+      res.status(200).json({
+          totalTicketsSold: totalTicketsSold[0]?.total || 0,
+          
+      });
+  } catch (err) {
+      res.status(500).json({ message: err.message });
+  }
+};
+// ******************
+// get total seats
+// *****************
+
+exports.totalSeats= async (req, res) => {
+  try {
+      const totalSeats = await Event.aggregate([
+          { $group: { _id: null, totalSeats: { $sum: '$seats' } } }
+      ]);
+console.log(totalSeats);
+      res.status(200).json({ totalSeats: totalSeats[0]?.totalSeats || 0 });
+  } catch (err) {
+    console.error('Error fetching total seats:', err);
+    res.status(500).json({ message: 'Error fetching total seats', details: err.message });
   }
 };

@@ -1,7 +1,6 @@
 const Ticket = require("../models/tickets_model");
 const ticketValidationSchema = require("../validators/tickets_Validators");
 
-
 // *************
 // Create Ticket
 // *************
@@ -35,16 +34,18 @@ exports.createTicket = async (req, res) => {
 // Get Ticket by id
 // *******************
 exports.getTicketById = async (req, res) => {
-    const { ticketId }  = req.params;
-    console.log(ticketId);
-    try {
-      const ticket = await Ticket.findOne({ticketId: ticketId});
-      if (!ticket) {
-        return res.status(404).json({ error: 'Ticket not found' });
-      }
-      res.status(200).json(ticket);
-    } catch (err) {
-      console.error('Error fetching ticket:', err);
-      res.status(500).json({ error: 'Error fetching ticket', details: err.message });
+  const { ticketId } = req.params;
+  console.log(ticketId);
+  try {
+    const ticket = await Ticket.findOne({ ticketId: ticketId });
+    if (!ticket) {
+      return res.status(404).json({ error: "Ticket not found" });
     }
-  };
+    res.status(200).json(ticket);
+  } catch (err) {
+    console.error("Error fetching ticket:", err);
+    res
+      .status(500)
+      .json({ error: "Error fetching ticket", details: err.message });
+  }
+};

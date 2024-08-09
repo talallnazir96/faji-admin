@@ -32,6 +32,7 @@ const UserSchema = new mongoose.Schema({
   },
   ticketsPurchased:{
     type: Number,
+    required:true
 
   }
 });

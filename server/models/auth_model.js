@@ -23,7 +23,6 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  
   pushNotificationsEnabled: {
     type: Boolean,
     default: false,
@@ -31,35 +30,6 @@ const userSchema = new mongoose.Schema({
 });
 
 
-
-//? secure the password with the bcrypt
-userSchema.pre("save", async function (next) {
-  const user = this;
-  // console.log("actual data ", this);
-
-  if (!user.isModified) {
-    return next();
-  }
-
-  try {
-    const saltRound = await bcrypt.genSalt(12);
-    const hashedPassword = await bcrypt.hash(user.password, saltRound);
-    user.password = hashedPassword;
-  } catch (error) {
-    return next(error);
-  }
-});
-
-//Compare Password
-// userSchema.methods.comparePassword = async function(candidatePassword) {
-//     if (!candidatePassword || !this.password) {
-//       throw new Error("Data and hash arguments are required");
-//     }
-//     return await bcrypt.compare(candidatePassword, this.password);
-//   };
-
-
-// generate token JWT
 
 userSchema.methods.generateToken = async function () {
   try {
