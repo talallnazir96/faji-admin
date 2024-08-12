@@ -40,41 +40,7 @@ const auditLogs = [
         eventname: "Party A",
         eventId: 456,
         description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin justo mi, ornare ac dictum vitae, rutrum ac nunc. Fusce tellus nulla, efficitur quis mollis et, cursus sit amet sapien. Mauris dictum rhoncus massa id tempus. Suspendisse lorem justo, lacinia vitae efficitur vel, vestibulum a mauris. Aliquam fringilla interdum massa tincidunt congue. Morbi pellentesque rutrum elementum. Nullam dapibus metus in rutrum dapibus. In quis magna leo."
-    },
-    {
-        id: 3,
-        timestamp: "2024-07-10T10:00:00Z",
-        user: {
-            id: 123,
-            username: "admin_user"
-        },
-        eventname: "Party A",
-        eventId: 456,
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin justo mi, ornare ac dictum vitae, rutrum ac nunc. Fusce tellus nulla, efficitur quis mollis et, cursus sit amet sapien. Mauris dictum rhoncus massa id tempus. Suspendisse lorem justo, lacinia vitae efficitur vel, vestibulum a mauris. Aliquam fringilla interdum massa tincidunt congue. Morbi pellentesque rutrum elementum. Nullam dapibus metus in rutrum dapibus. In quis magna leo."
-    },
-    {
-        id: 5,
-        timestamp: "2024-07-10T11:00:00Z",
-        user: {
-            id: 124,
-            username: "admin_user2"
-        },
-        eventname: "Party B",
-        eventId: 456,
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin justo mi, ornare ac dictum vitae, rutrum ac nunc. Fusce tellus nulla, efficitur quis mollis et, cursus sit amet sapien. Mauris dictum rhoncus massa id tempus. Suspendisse lorem justo, lacinia vitae efficitur vel, vestibulum a mauris. Aliquam fringilla interdum massa tincidunt congue. Morbi pellentesque rutrum elementum. Nullam dapibus metus in rutrum dapibus. In quis magna leo."
-    },
-    {
-        id: 6,
-        timestamp: "2024-07-10T12:00:00Z",
-        user: {
-            id: 123,
-            username: "admin_user"
-        },
-        eventname: "Party C",
-        eventId: 456,
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin justo mi, ornare ac dictum vitae, rutrum ac nunc. Fusce tellus nulla, efficitur quis mollis et, cursus sit amet sapien. Mauris dictum rhoncus massa id tempus. Suspendisse lorem justo, lacinia vitae efficitur vel, vestibulum a mauris. Aliquam fringilla interdum massa tincidunt congue. Morbi pellentesque rutrum elementum. Nullam dapibus metus in rutrum dapibus. In quis magna leo."
     }
-    
 ];
 const Reports = () => {
     const theme = useTheme();

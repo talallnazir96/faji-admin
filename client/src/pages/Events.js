@@ -35,17 +35,7 @@ function Events() {
   const [rowData] = useState([
     { id: 1, title: 'Party A', date: '2024-07-10', time: '18:00', seats: 100, location: 'Location A', price: '$50', status: 'Approved' },
     { id: 2,title: 'Party B', date: '2024-07-15', time: '20:00', seats: 200, location: 'Location B', price: '$75', status: 'Declined' },
-    { id: 3,title: 'Party C', date: '2024-07-20', time: '19:00', seats: 150, location: 'Location C', price: '$60', status: 'Pending' },
-    { id: 4,title: 'Party D', date: '2024-07-25', time: '21:00', seats: 80, location: 'Location D', price: '$40', status: 'Approved' },
-    { id: 5,title: 'Party E', date: '2024-07-30', time: '22:00', seats: 120, location: 'Location E', price: '$55', status: 'Approved' },
-    { id: 6,title: 'Party E', date: '2024-07-30', time: '22:00', seats: 120, location: 'Location E', price: '$55', status: 'Declined' },
-    { id: 7,title: 'Party E', date: '2024-07-30', time: '22:00', seats: 120, location: 'Location E', price: '$55', status: 'Declined' },
-    { id: 8,title: 'Party E', date: '2024-07-30', time: '22:00', seats: 120, location: 'Location E', price: '$55', status: 'Declined' },
-    { id: 9,title: 'Party E', date: '2024-07-30', time: '22:00', seats: 120, location: 'Location E', price: '$55', status: 'Pending' },
-    { id: 10,title: 'Party E', date: '2024-07-30', time: '22:00', seats: 120, location: 'Location E', price: '$55', status: 'Pending' },
-    { id: 11,title: 'Party E', date: '2024-07-30', time: '22:00', seats: 120, location: 'Location E', price: '$55', status: 'Approved' },
-    { id: 12,title: 'Party E', date: '2024-07-30', time: '22:00', seats: 120, location: 'Location E', price: '$55', status: 'Approved' },
-    { id: 13,title: 'Party E', date: '2024-07-30', time: '22:00', seats: 120, location: 'Location E', price: '$55', status: 'Approved' },
+    
   ]);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);

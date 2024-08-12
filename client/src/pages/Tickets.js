@@ -26,11 +26,7 @@ function Tickets() {
   const [rowData] = useState([
     { tId: '1234', eventName: 'Party A', userName: 'John Doe', date: '2024-07-15', price: '$50', pCode: '-' },
     { tId: '1235', eventName: 'Party B', userName: 'Jacky', date: '2024-07-15', price: '$50', pCode: 'ABC12#' },
-    { tId: '1236', eventName: 'Party C', userName: 'Edger', date: '2024-07-15', price: '$50', pCode: '-' },
-    { tId: '1237', eventName: 'Party D', userName: 'Talal', date: '2024-07-15', price: '$50', pCode: '-' },
-    { tId: '1238', eventName: 'Party E', userName: 'Vigen', date: '2024-07-15', price: '$50', pCode: '-' },
-    { tId: '1239', eventName: 'Party F', userName: 'Adrian', date: '2024-07-15', price: '$50', pCode: '-' },
-    { tId: '1240', eventName: 'Party G', userName: 'Livingstone', date: '2024-07-15', price: '$50', pCode: '-' },
+    
   ]);
   
   const [columnDefs] = useState([

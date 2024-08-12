@@ -21,12 +21,7 @@ const ViewEvent = () => {
     const [rowData] = useState([
         { id: 1, name: 'Dummy', email: 'abc@gmail.com', user_role: 'Organizer', registeration_date: '2024-07-15', status: 'active', tickets_purchased: '20'},
         { id: 2, name: 'Dummy', email: 'abc@gmail.com', user_role: 'Organizer', registeration_date: '2024-07-15', status: 'active', tickets_purchased: '10'},
-        { id: 3, name: 'Dummy', email: 'abc@gmail.com', user_role: 'Admin', registeration_date: '2024-07-15', status: 'active', tickets_purchased: '0'},
-        { id: 4, name: 'Dummy', email: 'abc@gmail.com', user_role: 'Admin', registeration_date: '2024-07-15', status: 'active', tickets_purchased: '0'},
-        { id: 5, name: 'Dummy', email: 'abc@gmail.com', user_role: 'Organizer', registeration_date: '2024-07-15', status: 'active', tickets_purchased: '50'},
-        { id: 6, name: 'Dummy', email: 'abc@gmail.com', user_role: 'Organizer', registeration_date: '2024-07-15', status: 'active', tickets_purchased: '20'},
-        { id: 7, name: 'Dummy', email: 'abc@gmail.com', user_role: 'Attendee', registeration_date: '2024-07-15', status: 'inactive', tickets_purchased: '20'},
-        { id: 8, name: 'Dummy', email: 'abc@gmail.com', user_role: 'Organizer', registeration_date: '2024-07-15', status: 'active', tickets_purchased: '20'},
+        
       ]);
       const [columnDefs] = useState([
         { headerName: 'User ID', field: 'id', filter: true, floatingFilter: true },

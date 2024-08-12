@@ -42,27 +42,6 @@ const auditLogs = [
                 new: "updated_user@example.com"
             }
         }
-    },
-    {
-        id: 3,
-        timestamp: "2024-07-10T12:00:00Z",
-        user: {
-            id: 123,
-            username: "admin_user"
-        },
-        action: "delete",
-        entity: "user",
-        entityId: 456,
-        changes: {
-            username: {
-                old: "new_user",
-                new: null
-            },
-            email: {
-                old: "updated_user@example.com",
-                new: null
-            }
-        }
     }
 ];
 
