@@ -25,15 +25,15 @@ import {
 } from "@mui/material";
 import axios from "axios";
 
-import { useParams,useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
 const EditPromo = () => {
   const { id } = useParams();
-//   console.log(id);
-const navigate = useNavigate();
+  //   console.log(id);
+  const navigate = useNavigate();
   const [selectedItems, setSelectedItems] = useState([]);
   const [formData, setFormData] = useState({
     code: "",
@@ -56,7 +56,6 @@ const navigate = useNavigate();
         const data = response.data;
         data.expiry_date = formatDate(data.expiry_date);
         setFormData(data);
-        
       })
       .catch((error) => {
         console.error("Error fetching post data:", error);
@@ -91,7 +90,6 @@ const navigate = useNavigate();
       setSnackbarSeverity("error");
       return;
     }
-    
 
     const payload = {
       code: formData.code,
@@ -100,12 +98,15 @@ const navigate = useNavigate();
       applicable_events: formData.applicable_events,
     };
     try {
-   
-       const response = await axios.put(`http://localhost:5000/api/promo/${id}`, payload, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await axios.put(
+        `http://localhost:5000/api/promo/${id}`,
+        payload,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
       console.log("Promocode updated successfully:", response.data);
       console.log(response.data);
       if (response.status === 200 || response.status === 201) {

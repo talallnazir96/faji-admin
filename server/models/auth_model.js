@@ -2,6 +2,10 @@ const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const userSchema = new mongoose.Schema({
+  userId:{
+    type:Number,
+    required: true,
+  },
   phoneNo: {
     type: String,
     required: true,
@@ -23,13 +27,17 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  role: {
+    type: String,
+    enum: ["admin", "attendee", "organizer"], // Limit the role to these values
+    default: "attendee", // Default role
+  },
+
   pushNotificationsEnabled: {
     type: Boolean,
     default: false,
   },
 });
-
-
 
 userSchema.methods.generateToken = async function () {
   try {

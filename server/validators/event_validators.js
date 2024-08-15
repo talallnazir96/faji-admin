@@ -7,8 +7,9 @@ const eventValidationSchema = Joi.object({
   seats: Joi.number().integer().min(1).required(),
   location: Joi.string().min(3).max(100).required(),
   description: Joi.string().required(),
-  price: Joi.number().min(0).required(),
-  status: Joi.string().valid('pending', 'approved', 'declined').optional()
+  price: Joi.string().min(0).required(),
+  status: Joi.string().valid('pending', 'approved', 'declined').optional(),
+  imageUrl: Joi.string().uri().optional()
 });
 
 module.exports = eventValidationSchema;

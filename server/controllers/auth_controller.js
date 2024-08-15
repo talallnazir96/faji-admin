@@ -15,11 +15,13 @@ exports.signUp = async (req, res) => {
   const { error } = authValidationSchema.validate(req.body);
   if (error) return res.status(400).json({ error: error.details[0].message });
   const {
+    userId,
     phoneNo,
     firstName,
     lastName,
     email,
     password,
+    role,
     pushNotificationsEnabled,
   } = req.body;
   try {
@@ -32,10 +34,12 @@ exports.signUp = async (req, res) => {
     const hashedPassword = await hashPassword(password);
 
     const userCreated = await User.create({
+      userId,
       phoneNo,
       firstName,
       lastName,
       email,
+      role,
       password: hashedPassword,
       pushNotificationsEnabled,
     });
@@ -78,7 +82,8 @@ exports.signIn = async (req, res) => {
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
-
+    req.session.userId = user._id;
+    console.log('User ID set in session:', req.session.userId); 
     const token = await user.generateToken();
     if (!token) {
       return res.status(500).json({ message: "Failed to generate token" });

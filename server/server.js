@@ -19,16 +19,29 @@ const Notification = require("./models/sendNotification_model");
 const socketIo = require("socket.io");
 const http = require("http");
 const cors = require("cors");
+const multer = require("multer");
+const session = require("express-session");
+const path = require("path");
 const PORT = 5000;
 const server = http.createServer(app);
-// console.log(server);
 const io = socketIo(server);
+
 //MiddleWare
 app.use(cors());
 app.use(express.json());
 app.use(errorMiddleware);
-
+app.use('/uploads', express.static(path.join(__dirname, 'router/uploads')));
 app.use(bodyParser.json());
+app.use(
+  session({
+    secret: 'your-secret-key', // Replace with a strong secret key
+    resave: true,
+    saveUninitialized: false,
+    cookie: { secure: false,maxAge: 3600000  } 
+    
+  })
+);
+
 //Routes
 
 app.use("/api/auth", authRoutes);
@@ -51,6 +64,7 @@ app.use("/api/reports", reportsRoutes);
 app.use("/api/email-templates", emailsRoutes);
 
 app.use("/api/app-notifications", notificationsRoutes);
+
 // Handle client connection
 io.on("connection", (socket) => {
   console.log("A user connected");
@@ -78,8 +92,6 @@ app.post("/api/app-notifications/send-notification/:id", async (req, res) => {
     io.emit("receiveNotification", { title, description });
     console.log("Notification sent to clients via Socket.io.");
 
-
-
     // Save notification to the database
     const notification = new Notification({
       id: req.params,
@@ -92,18 +104,21 @@ app.post("/api/app-notifications/send-notification/:id", async (req, res) => {
 
     const savedNotification = await notification.save();
     // Respond with the saved notification
-    // res.status(201).json(savedNotification);
+    res.status(201).json(savedNotification);
     console.log("Notification saved to database.");
-
 
     //  Send response back to client
     res
       .status(201)
       .json({ message: "Notification sent and saved successfully" });
-    
   } catch (error) {
     console.error("Error sending or saving notification:", error);
-    res.status(500).json({ message: "Error sending or saving notification",details:error.message });
+    res
+      .status(500)
+      .json({
+        message: "Error sending or saving notification",
+        details: error.message,
+      });
   }
 });
 

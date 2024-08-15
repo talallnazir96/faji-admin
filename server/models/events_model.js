@@ -9,6 +9,13 @@ const eventsSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+
+  organizer: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User", // Reference to the User model
+    required: true,
+  },
+
   date: { type: Date, required: true },
   time: {
     type: String,
@@ -18,19 +25,23 @@ const eventsSchema = new mongoose.Schema({
     type: String,
     status: { type: String, default: "pending" }, // 'pending', 'approved', 'declined'
   },
-  
+
   reason: { type: String },
+  images: {
+    type: [String],
+    required: true
+  },
   seats: {
     type: Number,
     required: true,
   },
-  description: { type: String,required: true },
+  description: { type: String, required: true },
   location: {
     type: String,
     required: true,
   },
   price: {
-    type: Number,
+    type: String,
     required: true,
   },
 });
