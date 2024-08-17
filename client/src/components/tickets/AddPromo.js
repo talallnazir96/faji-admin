@@ -47,12 +47,21 @@ const EditPromo = () => {
       [name]: value,
     }));
   };
+  const formatDate = (date) => {
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+    const day = String(d.getDate()).padStart(2, "0");
+
+    return `${month}-${day}-${year}`;
+  };
+  
   const items = ["Party A", "Party B", "Party C", "Party D", "Party E"];
   const handleSubmit = async (e) => {
     e.preventDefault();
     const payload = {
       code: formData.promocode,
-      expiry_date: formData.expiry_date,
+      expiry_date: formatDate(formData.expiry_date),
       discount_val: formData.discount,
       applicable_events: selectedItems,
     };
@@ -80,9 +89,7 @@ const EditPromo = () => {
           setSnackbarSeverity("error");
         }
       } catch (error) {
-        console.error("Error response data:", error.response?.data);
-        console.error("Error response status:", error.response?.status);
-        console.error("Error response headers:", error.response?.headers);
+       
         
         setSnackbarOpen(true);
         setSnackbarMessage("An error occurred!");

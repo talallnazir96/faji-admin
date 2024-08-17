@@ -1,6 +1,28 @@
 const Ticket = require("../models/tickets_model");
 const ticketValidationSchema = require("../validators/tickets_Validators");
+const formatDate = (date) => {
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+  const day = String(d.getDate()).padStart(2, "0");
 
+  return `${year}-${month}-${day}`;
+};
+// *************
+// Get All Ticket
+// *************
+exports.getAllTickets = async (req, res) => {
+  try {
+    const tickets = await Ticket.find();
+    const formattedTicketDate = tickets.map((ticket) => ({
+      ...ticket._doc,
+      purchasedDate: formatDate(ticket.purchasedDate), // Format as mm/dd/yyyy
+    }));
+    return res.json(formattedTicketDate);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 // *************
 // Create Ticket
 // *************

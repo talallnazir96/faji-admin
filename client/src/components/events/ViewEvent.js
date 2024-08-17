@@ -158,7 +158,7 @@ const ViewEvent = () => {
                 sx={{ fontFamily: "Montserrat, sans-serif", textAlign: "left" }}
               >
                 <span style={{ fontWeight: "500" }}>Event Organizer:</span>
-                <span style={{ fontWeight: "500" }}>{organizerName}</span>
+                <span style={{ fontWeight: "500" }}>{viewEvent.event_organizer}</span>
               </Typography>
             </Grid>
             <Grid item xs={12} sm={6} md={6}>

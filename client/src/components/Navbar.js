@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
@@ -11,6 +11,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import SearchIcon from '@mui/icons-material/Search';
 import { Container, Drawer, IconButton, List, ListItem, ListItemText } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
+import constant from "../constant";
 import {useMediaQuery, useTheme } from '@mui/material';
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
   top: 0,
@@ -37,13 +38,39 @@ const Search = styled("Box")(({ theme }) => ({
 
 }));
 function Navbar() {
+  const [userDetails, setUserDetails] = useState([]);
+  const [error, setError] = useState("");
   const theme = useTheme();
   const isXs = useMediaQuery(theme.breakpoints.only('xs'));
   const isSm = useMediaQuery(theme.breakpoints.only('sm'));
   const isMd = useMediaQuery(theme.breakpoints.only('md'));
   const isLg = useMediaQuery(theme.breakpoints.only('lg'));
   const isXl = useMediaQuery(theme.breakpoints.only('xl'));
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const userId = localStorage.getItem("userId");
 
+      if (userId) {
+        try {
+          const response = await fetch(`${constant.apiUrl}/auth/users/${userId}`);
+          const result = await response.json();
+console.log(result);
+          if (response.ok) {
+            setUserDetails(result);
+          } else {
+            setError(result.message);
+          }
+        } catch (err) {
+          setError("An error occurred while fetching user details.");
+        }
+      } else {
+        setError("User ID not found in local storage.");
+      }
+    };
+
+    fetchUserData();
+  }, []);
+  console.log(userDetails);
   const getVariant = () => {
     if (isXs) return 'h5';
     if (isSm) return 'h5';
@@ -91,7 +118,7 @@ function Navbar() {
               />
             </Search>
             <Typography variant='h6' sx={{ color: "#4E4E4E", fontFamily: 'Montserrat, sans-serif',fontSize:{xs:'11px',md:"15px"}, display: { xs: 'block', sm: 'block' } }}>
-              Hi Edger
+              Hi {userDetails.username}
             </Typography>
         </StyledToolBar>
 

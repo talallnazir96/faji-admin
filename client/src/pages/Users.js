@@ -11,7 +11,8 @@ import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import {useMediaQuery, useTheme } from '@mui/material';
-import { getAllUsers } from "../services/userService";
+import axios from 'axios';
+import constant from '../constant';
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -35,9 +36,9 @@ function Users() {
   useEffect(() => {
     const fetchAllUsers = async () => {
       try {
-        const users = await getAllUsers();
-        console.log(users);
-        setUsers(users);
+        const users = await axios.get(`${constant.apiUrl}/users`)
+        console.log(users.data);
+        setUsers(users.data);
       } catch (error) {
         setError("Error fetching users");
       } finally {
@@ -46,11 +47,11 @@ function Users() {
     };
     fetchAllUsers();
   }, []);
-  const [rowData] = useState([
-    { id: 1, name: 'Dummy', email: 'abc@gmail.com', user_role: 'Organizer', registeration_date: '2024-07-15', status: 'active', tickets_purchased: '20'},
-    { id: 2, name: 'Dummy', email: 'abc@gmail.com', user_role: 'Organizer', registeration_date: '2024-07-15', status: 'active', tickets_purchased: '10'},
+  // const [rowData] = useState([
+  //   { id: 1, name: 'Dummy', email: 'abc@gmail.com', user_role: 'Organizer', registeration_date: '2024-07-15', status: 'active', tickets_purchased: '20'},
+  //   { id: 2, name: 'Dummy', email: 'abc@gmail.com', user_role: 'Organizer', registeration_date: '2024-07-15', status: 'active', tickets_purchased: '10'},
     
-  ]);
+  // ]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [users,setUsers]= useState([]);
@@ -59,13 +60,13 @@ function Users() {
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
   const [columnDefs] = useState([
-    { headerName: 'User ID', field: 'id', filter: true, floatingFilter: true },
-    { headerName: 'User Name', field: 'name', filter: true, floatingFilter: true },
+    { headerName: 'User ID', field: 'userId', filter: true, floatingFilter: true },
+    { headerName: 'User Name', field: 'userName', filter: true, floatingFilter: true },
     { headerName: 'Email', field: 'email', filter: true, floatingFilter: true },
-    { headerName: 'User Role', field: 'user_role', filter: true, floatingFilter: true },
-    { headerName: 'Registeration Date', field: 'registeration_date', filter: true, floatingFilter: true },
+    { headerName: 'User Role', field: 'userRole', filter: true, floatingFilter: true },
+    { headerName: 'Registeration Date', field: 'registrationDate', filter: true, floatingFilter: true },
     { headerName: 'Status', field: 'status', filter: true, floatingFilter: true },
-    { headerName: 'Tickets Purchased', field: 'tickets_purchased', filter: true, floatingFilter: true },
+    { headerName: 'Tickets Purchased', field: 'ticketsPurchased', filter: true, floatingFilter: true },
     {
       headerName: 'Actions',
       pinned: 'right',
@@ -154,7 +155,7 @@ const handleDialogConfirm = () => {
               <TabPanel value="3" sx={{textAlign: "left", fontSize: "24px", fontFamily: 'Montserrat, sans-serif'}}>Attendees</TabPanel>
               <div className="ag-theme-alpine" style={{ height: 400, width: '100%' }}>
             <AgGridReact
-              rowData={rowData}
+              rowData={users}
               columnDefs={columnDefs}
               pagination={true}
               paginationPageSize={6}

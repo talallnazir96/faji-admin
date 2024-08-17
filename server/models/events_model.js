@@ -1,6 +1,10 @@
 const mongoose = require("mongoose");
 
 const eventsSchema = new mongoose.Schema({
+  eventId: {
+    type: Number,
+    required: true,
+  },
   eventTitle: {
     type: String,
     required: true,
@@ -9,13 +13,10 @@ const eventsSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-
-  organizer: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User", // Reference to the User model
+  event_organizer: {
+    type: String,
     required: true,
   },
-
   date: { type: Date, required: true },
   time: {
     type: String,
@@ -29,7 +30,7 @@ const eventsSchema = new mongoose.Schema({
   reason: { type: String },
   images: {
     type: [String],
-    required: true
+    required: true,
   },
   seats: {
     type: Number,

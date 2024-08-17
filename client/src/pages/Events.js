@@ -51,11 +51,7 @@ function Events() {
     if (isXl) return "h3";
     return "body1"; // Default variant
   };
-  // const [rowData] = useState([
-  //   { id: 1, title: 'Party A', date: '2024-07-10', time: '18:00', seats: 100, location: 'Location A', price: '$50', status: 'Approved' },
-  //   { id: 2,title: 'Party B', date: '2024-07-15', time: '20:00', seats: 200, location: 'Location B', price: '$75', status: 'Declined' },
-
-  // ]);
+ 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -118,7 +114,7 @@ function Events() {
   const [columnDefs] = useState([
     {
       headerName: "User Id",
-      field: "_id",
+      field: "eventId",
       filter: true,
       floatingFilter: true,
     },
@@ -136,13 +132,7 @@ function Events() {
       editable: true,
       cellRenderer: (params) => {
         console.log(params);
-        // const handleChange = (event) => {
-        //   const newValue = event.target.value;
-        //   setSnackbarOpen(true)
-        //   setSnackbarMessage('Event Status Updated Successfully!');
-        //   setSnackbarSeverity('success');
-        //   params.setValue(newValue); // Update the grid value
-        // };
+      
 
         return (
           <select
@@ -235,36 +225,40 @@ function Events() {
   const handleDelete = (eventId) => {
     setEventIdToDelete(eventId);
     setDialogOpen(true);
-   
   };
   const handleDialogClose = () => {
     setDialogOpen(false);
   };
-  const handleDialogConfirm =async (id) => {
+  const handleDialogConfirm = async (id) => {
     if (eventIdToDelete === null) return;
- 
+
     try {
-      const response = await fetch(`http://localhost:5000/api/events/${eventIdToDelete}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-  
+      const response = await fetch(
+        `http://localhost:5000/api/events/${eventIdToDelete}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
       if (response.ok) {
         // Successfully deleted
-        console.log('Event Deleted Successfully');
-     
+        console.log("Event Deleted Successfully");
+
         setEvents((prevPosts) => {
-          const updatedEvents = prevPosts.filter((event) => event._id !== eventIdToDelete);
-          console.log('Updated events:', updatedEvents); // Log the updated state
+          const updatedEvents = prevPosts.filter(
+            (event) => event._id !== eventIdToDelete
+          );
+          console.log("Updated events:", updatedEvents); // Log the updated state
           return updatedEvents;
         });
       } else {
         console.error(`Failed to delete event: ${response.statusText}`);
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error:", error);
     } finally {
       setDialogOpen(false); // Close the dialog after handling
       setEventIdToDelete(null);
@@ -274,8 +268,6 @@ function Events() {
       setSnackbarOpen(true);
     }
 
- 
-   
     // Handle form submission logic (e.g., send data to the server)
   };
   const handleSnackbarClose = () => {

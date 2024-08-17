@@ -48,19 +48,18 @@ const UpdateEvent = () => {
     return `${year}-${month}-${day}`;
   };
   const { id } = useParams();
+  console.log(id);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     eventTitle: "",
     date: "",
-    organizer: "",
+    event_organizer: "",
     status: "",
     location: "",
     price: "",
     description: "",
   });
-  const organizerName = formData.organizer
-    ? `${formData.organizer.firstName} ${formData.organizer.lastName}`
-    : "Unknown";
+
   useEffect(() => {
     axios
       .get(`http://localhost:5000/api/events/${id}`)
@@ -92,7 +91,7 @@ const UpdateEvent = () => {
     const payload = {
       eventTitle: formData.eventTitle,
       date: formData.date,
-      organizer: formData.organizer,
+      event_organizer:formData.event_organizer,
       status: formData.status,
       location: formData.location,
       price: formData.price,
@@ -124,7 +123,7 @@ const UpdateEvent = () => {
       setSnackbarOpen(true);
       setSnackbarMessage("Error updating event!");
       setSnackbarSeverity("error");
-      console.error("Error updating event", {details:error.message});
+      console.error("Error updating event", { details: error.message });
     }
   };
   const handleDialogClose = () => {
@@ -207,8 +206,8 @@ const UpdateEvent = () => {
                   "aria-label": "weight",
                 }}
                 fullWidth
-                name="organizer"
-                value={`${formData.organizer.firstName} ${formData.organizer.lastName}`}
+                name="event_organizer"
+                value={formData.event_organizer}
                 onChange={handleChange}
               />
               <FormHelperText id="organizer">Event Organizer</FormHelperText>

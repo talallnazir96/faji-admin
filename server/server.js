@@ -8,6 +8,7 @@ const eventsRoutes = require("./router/events_route");
 const ticketsRoutes = require("./router/tickets_route");
 const promocodeRoutes = require("./router/promocode_route");
 const authRoutes = require("./router/auth_route");
+const adminRoutes = require("./router/admin_route");
 const userRoutes = require("./router/user_route");
 const settingsRoutes = require("./router/settings_route");
 const logsRoutes = require("./router/auditLogs_route");
@@ -19,31 +20,19 @@ const Notification = require("./models/sendNotification_model");
 const socketIo = require("socket.io");
 const http = require("http");
 const cors = require("cors");
-const multer = require("multer");
-const session = require("express-session");
 const path = require("path");
 const PORT = 5000;
 const server = http.createServer(app);
 const io = socketIo(server);
-
+const fileUpload = require('express-fileupload'); 
 //MiddleWare
 app.use(cors());
 app.use(express.json());
 app.use(errorMiddleware);
-app.use('/uploads', express.static(path.join(__dirname, 'router/uploads')));
 app.use(bodyParser.json());
-app.use(
-  session({
-    secret: 'your-secret-key', // Replace with a strong secret key
-    resave: true,
-    saveUninitialized: false,
-    cookie: { secure: false,maxAge: 3600000  } 
-    
-  })
-);
-
+app.use(fileUpload());
 //Routes
-
+app.use('/api',adminRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/blogs", blogRoutes);
 
@@ -113,12 +102,10 @@ app.post("/api/app-notifications/send-notification/:id", async (req, res) => {
       .json({ message: "Notification sent and saved successfully" });
   } catch (error) {
     console.error("Error sending or saving notification:", error);
-    res
-      .status(500)
-      .json({
-        message: "Error sending or saving notification",
-        details: error.message,
-      });
+    res.status(500).json({
+      message: "Error sending or saving notification",
+      details: error.message,
+    });
   }
 });
 

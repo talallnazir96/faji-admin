@@ -6,7 +6,28 @@ const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const { hashPassword, comparePassword } = require("../secure/hashPassword");
 
+exports.getUserById = async (req, res) => {
+  const { id } = req.params;
+  console.log(id);
 
+  try {
+    // Fetch user details from the database
+    const user = await User.findById(id).select("username email role"); // Adjust fields as needed
+
+    if (user) {
+      res.json({
+        username: user.username,
+        email: user.email,
+        role: user.role,
+        // Include any other details you need
+      });
+    } else {
+      res.status(404).json({ message: "User not found" });
+    }
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
 // *******************
 // SIGN UP LOGIC
 // *******************
@@ -17,8 +38,7 @@ exports.signUp = async (req, res) => {
   const {
     userId,
     phoneNo,
-    firstName,
-    lastName,
+    username,
     email,
     password,
     role,
@@ -26,7 +46,7 @@ exports.signUp = async (req, res) => {
   } = req.body;
   try {
     // Check if user already exists
-    const userExist = await User.findOne({ email });
+    const userExist = await User.findOne({ username });
     if (userExist) {
       return res.status(400).json({ message: "User already exists" });
     }
@@ -36,8 +56,7 @@ exports.signUp = async (req, res) => {
     const userCreated = await User.create({
       userId,
       phoneNo,
-      firstName,
-      lastName,
+      username,
       email,
       role,
       password: hashedPassword,
@@ -64,8 +83,8 @@ exports.signUp = async (req, res) => {
 exports.signIn = async (req, res) => {
   // const { error } = schema.validate(req.body);
   // if (error) return res.status(400).send(error.details[0].message);
-  const { email, password } = req.body;
-  console.log(email);
+  const { username, password } = req.body;
+  console.log(username);
   console.log(password);
 
   try {
@@ -73,7 +92,8 @@ exports.signIn = async (req, res) => {
     //     return res.status(400).json({ message: 'All fields are required' });
     // }
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ username });
+    console.log(user);
     if (!user) {
       return res.status(400).json({ message: "User does not exist" });
     }
@@ -82,8 +102,7 @@ exports.signIn = async (req, res) => {
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
-    req.session.userId = user._id;
-    console.log('User ID set in session:', req.session.userId); 
+
     const token = await user.generateToken();
     if (!token) {
       return res.status(500).json({ message: "Failed to generate token" });
@@ -92,13 +111,23 @@ exports.signIn = async (req, res) => {
       msg: "login successfull",
       token,
       userId: user._id.toString(),
+      userRole: user.role,
     });
   } catch (error) {
     console.error("Error in login:", error);
     res.status(500).json({ error: "Server error", details: error.message });
   }
 };
-
+// Logout route to destroy session
+exports.logOut = (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      return res.status(500).json({ message: "Logout failed" });
+    }
+    res.clearCookie("connect.sid"); // Replace 'connect.sid' with your session cookie name if different
+    res.status(200).json({ message: "Logged out successfully" });
+  });
+};
 // *******************
 // Forget Password
 // *******************

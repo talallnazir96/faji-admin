@@ -1,6 +1,8 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef,useEffect } from 'react';
 import { Typography, Grid, Button, IconButton, Box, TextField } from '@mui/material';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
+import axios from 'axios';
+import constant from '../constant';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
@@ -8,6 +10,9 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import { useMediaQuery, useTheme } from '@mui/material';
 import {Link} from "react-router-dom";
 function Tickets() {
+  const [tickets,setTickets] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const theme = useTheme();
   const isXs = useMediaQuery(theme.breakpoints.only('xs'));
   const isSm = useMediaQuery(theme.breakpoints.only('sm'));
@@ -23,19 +28,28 @@ function Tickets() {
     if (isXl) return 'h3';
     return 'body1'; // Default variant
   };
-  const [rowData] = useState([
-    { tId: '1234', eventName: 'Party A', userName: 'John Doe', date: '2024-07-15', price: '$50', pCode: '-' },
-    { tId: '1235', eventName: 'Party B', userName: 'Jacky', date: '2024-07-15', price: '$50', pCode: 'ABC12#' },
-    
-  ]);
+  useEffect(()=>{
+    const fetchTickets = async () => {
+      try {
+        const tickets = await axios.get(`${constant.apiUrl}/tickets`); // Use the apiUrl from config
+        console.log(tickets.data);
+        setTickets(tickets.data); // Update state with the fetched data
+      } catch (err) {
+        setError(err.message);
+      } 
+    };
+  fetchTickets();
+  },[])
+  console.log(tickets);
+
   
   const [columnDefs] = useState([
-    { headerName: 'Ticket ID', field: 'tId', filter: true, floatingFilter: true },
-    { headerName: 'Party Name', field: 'eventName', filter: true, floatingFilter: true },
+    { headerName: 'Ticket ID', field: 'ticketId', filter: true, floatingFilter: true },
+    { headerName: 'Party Name', field: 'partyName', filter: true, floatingFilter: true },
     { headerName: 'User Name', field: 'userName', filter: true, floatingFilter: true },
-    { headerName: 'Purchase Date', field: 'date', filter: true, floatingFilter: true },
+    { headerName: 'Purchase Date', field: 'purchasedDate', filter: true, floatingFilter: true },
     { headerName: 'Price', field: 'price', filter: true, floatingFilter: true },
-    { headerName: 'Promo Code', field: 'pCode', filter: true, floatingFilter: true },
+    { headerName: 'Promo Code', field: 'promoCode', filter: true, floatingFilter: true },
     {
       headerName: 'Actions',
       field: 'actions',
@@ -46,7 +60,7 @@ function Tickets() {
         <Box>
           <Link
           to={{
-            pathname: `/tickets/view-ticket/${params.data.tId}`, // Dynamic route for detail view
+            pathname: `/tickets/view-ticket/${params.data.ticketId}`, // Dynamic route for detail view
             state: { selectedItem: params.data }, // Pass selected item as state
           }}
           style={{ textDecoration: 'none' }}
@@ -77,7 +91,7 @@ function Tickets() {
         <Grid item xs={12} sm={12} md={12} sx={{marginTop: "4%"}}>
           <div className="ag-theme-alpine" style={{ height: 400, width: '100%' }}>
             <AgGridReact
-              rowData={rowData}
+              rowData={tickets}
               columnDefs={columnDefs}
               pagination={true}
               paginationPageSize={10}

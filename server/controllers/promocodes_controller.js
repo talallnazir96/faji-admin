@@ -5,7 +5,7 @@ const formatDate = (date) => {
   const month = String(d.getMonth() + 1).padStart(2, "0"); // Months are zero-based
   const day = String(d.getDate()).padStart(2, "0");
 
-  return `${month}-${day}-${year}`;
+  return `${year}-${month}-${day}`;
 };
 // ****************
 //Get All  promocodes
@@ -48,8 +48,8 @@ exports.getSinglePromocode = async (req, res) => {
 // *************************
 
 exports.createPromocodes = async (req, res) => {
-  const { code, applicable_events, discount_val } = req.body;
-  const expiry_date = formattDate;
+  const { code, applicable_events,expiry_date, discount_val } = req.body;
+ 
   const promocode = new Promocode({
     code,
     applicable_events,

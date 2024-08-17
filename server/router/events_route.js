@@ -4,13 +4,7 @@ const multer = require("multer");
 const path = require('path');
 const fs = require('fs');
 const eventsController = require("../controllers/events_controller");
-// const isAuthenticated = (req, res, next) => {
-//   if (req.session.userId) {
-//     next(); // User is authenticated
-//   } else {
-//     res.status(401).json({ message: "Unauthorized" }); // User is not authenticated
-//   }
-// };
+
 const uploadDir = path.join(__dirname, 'router/uploads');
 
 // Function to check and create directory
@@ -41,12 +35,6 @@ router.route("/stats").get(eventsController.eventsStats);
 
 router.route("/:id").get(eventsController.getEventById);
 
-// router.post('/create-event', upload.array('images', 10), (req, res, next) => {
-//     if (!req.files) {
-//       return res.status(400).json({ message: 'No files uploaded' });
-//     }
-//     next();
-//   },  eventsController.createEvent);
 router.route("/").post(upload.array("images", 5), eventsController.createEvent);
 
 router.route("/:id/status").put(eventsController.updatedEventStatus);

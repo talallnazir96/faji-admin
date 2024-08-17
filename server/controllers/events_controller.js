@@ -1,6 +1,7 @@
 const Event = require("../models/events_model");
 const User = require("../models/user_model");
 const path = require("path");
+const fs = require("fs");
 const eventValidationSchema = require("../validators/event_Validators");
 const formatDate = (date) => {
   const d = new Date(date);
@@ -11,15 +12,20 @@ const formatDate = (date) => {
   return `${year}-${month}-${day}`;
 };
 
+
+
+// Define the upload directory
+const uploadDir = path.join(__dirname, "..", "uploads");
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
 // *****************
 // Get All  events
 // *****************
 
 exports.getAllEvents = async (req, res) => {
   try {
-    const events = await Event.find()
-      .populate("organizer", "firstName lastName") // Populate with user's name
-      .exec();
+    const events = await Event.find();
     const formattedEventDate = events.map((event) => ({
       ...event._doc,
       date: formatDate(event.date), // Format as mm/dd/yyyy
@@ -38,12 +44,8 @@ exports.getEventById = async (req, res) => {
   // const { id } = req.params;
 
   try {
-    const event = await Event.findById(req.params.id)
-      .populate({
-        path: "organizer",
-        select: "firstName lastName", // Only select the 'name' field from the User model
-      })
-      .exec();
+    const event = await Event.findById(req.params.id);
+
     if (!event) {
       return res.status(404).json({ error: "Event not found" });
     }
@@ -61,59 +63,65 @@ exports.getEventById = async (req, res) => {
 // *****************
 
 exports.createEvent = async (req, res) => {
-  console.log('Session user ID:', req.session.userId); // Debug log
-  console.log('Event data:', req.body); // Debug log
-
-  console.log('Files:', req.files); // Debug log
-  //  Event validation
-  // const { error } = eventValidationSchema.validate(req.body);
-  // if (error) return res.status(400).json({ error: error.details[0].message });
-  if (!req.files || req.files.length === 0) {
-    return res.status(400).json({ message: 'No files uploaded' });
-  }
-  if (!req.session.userId) {
-    return res.status(401).json({ message: "Unauthorized" });
-  }
- 
-  const {
-    eventTitle,
-    date,
-    time,
-    seats,
-    location,
-    price,
-    description,
-    images,
-  } = req.body;
-  const imageUrls = req.files.map(file => `${req.protocol}://${req.get('host')}/uploads/${path.basename(file.path)}`);
-  // If no image files are uploaded and no image URL is provided
-  if (imageUrls.length === 0) {
-    return res.status(400).json({
-      message: "At least one image is required, either as a file upload or an image URL.",
-    });
-  }
-
-  const newEvent = await new Event({
-    eventTitle,
-    date,
-    time,
-    seats,
-    location,
-    price,
-    organizer: req.session.userId,
-    description,
-    images: imageUrls,
-  });
-
   try {
-    const savedEvent = await newEvent.save();
-    res.status(201).json(savedEvent);
-  } catch (err) {
-    console.error("Error creating event:", err);
-    res
-      .status(500)
-      .json({ error: "Error creating event", details: err.message });
+    // Check if files were uploaded
+    if (!req.files || !req.files.image) {
+      return res.status(400).send('No files were uploaded.');
+    }
+    
+    const image = req.files.image;
+    const filePath = path.join(uploadDir, image.name);
+
+    // Save the file to the server directory
+    image.mv(filePath, async (err) => {
+      if (err) {
+        return res.status(500).send(err);
+      }
+      
+      // Construct the URL for the uploaded image
+      const imageUrl = `${req.protocol}://${req.get("host")}/uploads/${path.basename(filePath)}`;
+
+      // Extract event details from request body
+      const {
+        eventId,
+        eventTitle,
+        date,
+        time,
+        seats,
+        location,
+        price,
+        description,
+        event_organizer
+      } = req.body;
+
+      // Create a new event with the uploaded image URL
+      const newEvent = new Event({
+        eventId,
+        eventTitle,
+        date,
+        time,
+        seats,
+        location,
+        price,
+        description,
+        images: [imageUrl], // Assuming `images` is an array of URLs
+        event_organizer,
+      });
+
+      try {
+        const savedEvent = await newEvent.save();
+        res.status(201).json(savedEvent);
+      } catch (err) {
+        console.error("Error creating event:", err);
+        res.status(500).json({ error: "Error creating event", details: err.message });
+      }
+    });
+
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal Server Error", details: error.message });
   }
+
 };
 
 // *****************
@@ -183,12 +191,7 @@ exports.updateEvent = async (req, res) => {
     const updatedData = req.body;
     const event = await Event.findByIdAndUpdate(eventId, updatedData, {
       new: true,
-    })
-      .populate({
-        path: "organizer",
-        select: "firstName lastName", // Only select the 'name' field from the User model
-      })
-      .exec();
+    });
 
     res.status(200).json({ message: "Event updated", event });
   } catch (error) {

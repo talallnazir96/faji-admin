@@ -29,7 +29,14 @@ import { useParams, useNavigate } from "react-router-dom";
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
+const formatDate = (date) => {
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+  const day = String(d.getDate()).padStart(2, "0");
 
+  return `${year}-${month}-${day}`;
+};
 const EditPromo = () => {
   const { id } = useParams();
   //   console.log(id);
@@ -45,10 +52,7 @@ const EditPromo = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
-  const formatDate = (dateStr) => {
-    const [month, day, year] = dateStr.split("-");
-    return `${year}-${month}-${day}`;
-  };
+  
   useEffect(() => {
     axios
       .get(`http://localhost:5000/api/promo/${id}`)
