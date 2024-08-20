@@ -115,7 +115,7 @@ function App() {
                   <BackgroundUpdater /> 
                   <Routes>
                     <Route path="/" element={isLoggedIn ? <Home /> : <Navigate to="/login" />} />
-                    <Route path="/login" element={<Login  setAuthToken={setAuthToken}  />} />
+                    <Route path="/login" element={isLoggedIn ? <Home /> : <Login  setAuthToken={setAuthToken}  />} />
                     <Route path="/users" element={isLoggedIn ? <Users /> : <Navigate to="/login" />} />
                     <Route path="/events" element={isLoggedIn ? <Events /> : <Navigate to="/login" />} />
                     <Route path="/tickets" element={isLoggedIn ? <Tickets /> : <Navigate to="/login" />} />

@@ -9,13 +9,17 @@ const BlogSchema = new mongoose.Schema({
       type: String,
       required: true
     },
-    imageUrl: {
+    image: {
       type: String,
       required: true
     },
     createdAt: {
       type: Date,
       default: Date.now
+    },
+    short_desc:{
+      type: String,
+      required: true
     }
   });
   

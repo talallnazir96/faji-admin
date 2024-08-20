@@ -1,6 +1,10 @@
 const mongoose = require("mongoose");
 
 const eventsSchema = new mongoose.Schema({
+  userId: {
+    type: Number,
+    required: true,
+  },
   eventId: {
     type: Number,
     required: true,
@@ -24,7 +28,6 @@ const eventsSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    status: { type: String, default: "pending" }, // 'pending', 'approved', 'declined'
   },
 
   reason: { type: String },

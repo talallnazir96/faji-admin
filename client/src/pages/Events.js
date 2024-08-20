@@ -51,28 +51,33 @@ function Events() {
     if (isXl) return "h3";
     return "body1"; // Default variant
   };
- 
+
   const [dialogOpen, setDialogOpen] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
   const [eventIdToDelete, setEventIdToDelete] = useState(null);
-  useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const response = await axios.get(`${constant.apiUrl}/events`); // Use the apiUrl from config
-        console.log(response.data);
-        setEvents(response.data); // Update state with the fetched data
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false); // Stop the loading spinner
-      }
-    };
+  const [statusFilter, setStatusFilter] = useState("approved");
+  const fetchEvents = async (status) => {
+    setLoading(true); // Show loading spinner
 
-    fetchEvents(); // Call the function to fetch data
-  }, []);
+    try {
+      const response = await axios.get(`${constant.apiUrl}/events`, {
+        params: { status: status }, // Send status as a query parameter
+      });
+      console.log(response.data);
+      setEvents(response.data); // Update state with the fetched data
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false); // Stop the loading spinner
+    }
+  };
+  useEffect(() => {
+    fetchEvents(statusFilter); // Fetch events with the default status filter
+  }, [statusFilter]);
   // console.log(events);
+
   const handleStatusChange = async (event, eventId) => {
     const newStatus = event.target.value;
     console.log(`Updating event ${eventId} to status: ${newStatus}`);
@@ -113,7 +118,7 @@ function Events() {
 
   const [columnDefs] = useState([
     {
-      headerName: "User Id",
+      headerName: "Event Id",
       field: "eventId",
       filter: true,
       floatingFilter: true,
@@ -132,7 +137,6 @@ function Events() {
       editable: true,
       cellRenderer: (params) => {
         console.log(params);
-      
 
         return (
           <select
@@ -149,7 +153,7 @@ function Events() {
           >
             <option value="approved">Approved</option>
             <option value="declined">Declined</option>
-            <option value="req_info">Need Info.</option>
+            <option value="pending">Pending</option>
           </select>
         );
       },
@@ -268,7 +272,6 @@ function Events() {
       setSnackbarOpen(true);
     }
 
-    // Handle form submission logic (e.g., send data to the server)
   };
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
@@ -278,6 +281,18 @@ function Events() {
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
+
+    // Update the status filter based on the selected tab
+    if (newValue === "1") {
+      setStatusFilter("approved");
+    } else if (newValue === "2") {
+      setStatusFilter("pending");
+    } else if (newValue === "3") {
+      setStatusFilter("declined");
+    }
+
+    // Fetch events based on the new status filter
+    fetchEvents(statusFilter);
   };
 
   return (

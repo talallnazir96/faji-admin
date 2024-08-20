@@ -1,9 +1,9 @@
 const mongoose = require("mongoose");
 
 const UserSchema = new mongoose.Schema({
+  eventId: { type: mongoose.Schema.Types.ObjectId, ref: "Event" },
   userId: {
     type: Number,
-    
   },
   userName: {
     type: String,
@@ -11,30 +11,29 @@ const UserSchema = new mongoose.Schema({
   },
   email: {
     type: String,
-    required: true
+    required: true,
   },
-  password:{
+  password: {
     type: String,
-    required: true
+    required: true,
   },
-  userRole:{
+  userRole: {
     type: String,
     default: "Organizer", // 'organizer', 'Admin', 'Attendee',
-
   },
-  registrationDate:{
+  registrationDate: {
     type: Date,
+    default: Date.now, // Automatically set the current date when creating a new user
   },
- 
-  status:{
+  status: {
     type: String,
     default: "active", // active, inActive
   },
-  ticketsPurchased:{
-    type: Number,
-    required:true
+  // ticketsPurchased:{
+  //   type: Number,
+  //   required:true
 
-  }
+  // }
 });
 
-module.exports =  mongoose.model('Manageusers',UserSchema );
+module.exports = mongoose.model("Manageusers", UserSchema);

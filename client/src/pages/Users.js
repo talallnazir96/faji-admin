@@ -59,6 +59,7 @@ function Users() {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+  const [userIdToDelete, setUserIdToDelete] = useState(null);
   const [columnDefs] = useState([
     { headerName: 'User ID', field: 'userId', filter: true, floatingFilter: true },
     { headerName: 'User Name', field: 'userName', filter: true, floatingFilter: true },
@@ -77,14 +78,14 @@ function Users() {
         <Box>
         <Link
           to={{
-            pathname: `/users/edit-user/${params.data.id}`, // Dynamic route for detail view
+            pathname: `/users/edit-user/${params.data._id}`, // Dynamic route for detail view
             state: { selectedItem: params.data }, // Pass selected item as state
           }}
           style={{ textDecoration: 'none' }}
         >
           <IconButton
             aria-label="edit"
-            onClick={() => handleEdit(params.data)}
+            onClick={() => handleEdit(params.data._id)}
             sx={{fontSize: "medium"}}
           >
             <EditIcon sx={{fontSize: 16, color: "#479f76"}} />
@@ -92,7 +93,7 @@ function Users() {
         </Link>
           <IconButton
             aria-label="delete"
-            onClick={() => handleDelete(params.data)}
+            onClick={() => handleDelete(params.data._id)}
             sx={{fontSize: "medium"}}
           >
             <DeleteIcon sx={{fontSize: 16, color: "#dc3545"}} />
@@ -107,29 +108,63 @@ function Users() {
     console.log('Edit', data);
   };
 
-  const handleDelete = (data) => {
+  const handleDelete = (userId) => {
+    setUserIdToDelete(userId);
     setDialogOpen(true);
-    console.log('Delete', data);
+    
   };
   const handleDialogClose = () => {
     setDialogOpen(false);
 };
-const handleDialogConfirm = () => {
-    setSnackbarMessage('User Deleted Successfully!');
-    setSnackbarSeverity('success');
+const handleDialogConfirm = async(id) => {
+  if (userIdToDelete === null) return;
+
+  try {
+    const response = await fetch(
+      `${constant.apiUrl}/users/${userIdToDelete}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (response.ok) {
+      // Successfully deleted
+      console.log("User Deleted Successfully");
+
+      setUsers((prevPosts) => {
+        const updatedUsers = prevPosts.filter(
+          (user) => user._id !== userIdToDelete
+        );
+        console.log("Updated users:", updatedUsers); // Log the updated state
+        return updatedUsers;
+      });
+    } else {
+      console.error(`Failed to delete user: ${response.statusText}`);
+    }
+  } catch (error) {
+    console.error("Error:", error);
+  } finally {
+    setDialogOpen(false); // Close the dialog after handling
+    setUserIdToDelete(null);
+    setSnackbarMessage("User Deleted Successfully!");
+    setSnackbarSeverity("success");
     setDialogOpen(false);
     setSnackbarOpen(true);
-    // Handle form submission logic (e.g., send data to the server)
+  }
   };
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
   };
   // Tab Data
-  const [value, setValue] = React.useState('1');
+  const [value, setValue] = React.useState("1");
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+
   return (
     <>
       <Grid container sx={{marginTop: "9%", marginBottom: "2%"}}>

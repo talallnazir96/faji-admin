@@ -1,4 +1,7 @@
 const Blog = require("../models/blog_model");
+const upload = require("../uploads");
+const path = require("path");
+
 // *******************
 // Get all blogs
 // *******************
@@ -33,12 +36,17 @@ exports.getSingleBlog = async (req, res) => {
 // *******************
 
 exports.createBlog = async (req, res) => {
-  const { title, content, imageUrl } = req.body;
-
+  const { title, content,short_desc } = req.body;
+  if (req.file) {
+    imageUrl = `${process.env.SERVER_URL}/Images/${path.basename(req.file.path)}`;
+  } else {
+    imageUrl = null; // Handle cases where no file is uploaded
+  }
   const newBlog = new Blog({
     title,
     content,
-    imageUrl,
+    short_desc,
+    image:imageUrl,
   });
   try {
     const savedBlog = await newBlog.save();

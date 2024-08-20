@@ -1,7 +1,8 @@
 const Event = require("../models/events_model");
 const User = require("../models/user_model");
-const path = require("path");
 const fs = require("fs");
+const upload = require("../uploads");
+const path = require("path");
 const eventValidationSchema = require("../validators/event_Validators");
 const formatDate = (date) => {
   const d = new Date(date);
@@ -12,27 +13,27 @@ const formatDate = (date) => {
   return `${year}-${month}-${day}`;
 };
 
-
-
-// Define the upload directory
-const uploadDir = path.join(__dirname, "..", "uploads");
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
-// *****************
-// Get All  events
-// *****************
-
-exports.getAllEvents = async (req, res) => {
+// Fetch events with optional status filter
+exports.getEvents = async (req, res) => {
   try {
-    const events = await Event.find();
+    const { status } = req.query; // Get the status filter from query parameters
+
+    let query = {}; // Default query to get all events
+
+    if (status) {
+      query.status = status; 
+    }
+
+    const events = await Event.find(query);
     const formattedEventDate = events.map((event) => ({
       ...event._doc,
-      date: formatDate(event.date), // Format as mm/dd/yyyy
+      date: formatDate(event.date), 
     }));
-    return res.json(formattedEventDate);
+    return res.json(formattedEventDate); 
+
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error("Error fetching events:", error);
+    res.status(500).json({ message: "Server error" }); // Handle errors
   }
 };
 
@@ -64,70 +65,76 @@ exports.getEventById = async (req, res) => {
 
 exports.createEvent = async (req, res) => {
   try {
-    // Check if files were uploaded
-    if (!req.files || !req.files.image) {
-      return res.status(400).send('No files were uploaded.');
-    }
-    
-    const image = req.files.image;
-    const filePath = path.join(uploadDir, image.name);
+    const {
+      eventId,
+      userId,
+      eventTitle,
+      date,
+      time,
+      seats,
+      location,
+      price,
 
-    // Save the file to the server directory
-    image.mv(filePath, async (err) => {
-      if (err) {
-        return res.status(500).send(err);
-      }
-      
-      // Construct the URL for the uploaded image
-      const imageUrl = `${req.protocol}://${req.get("host")}/uploads/${path.basename(filePath)}`;
-
-      // Extract event details from request body
-      const {
-        eventId,
-        eventTitle,
-        date,
-        time,
-        seats,
-        location,
-        price,
-        description,
-        event_organizer
-      } = req.body;
-
-      // Create a new event with the uploaded image URL
-      const newEvent = new Event({
-        eventId,
-        eventTitle,
-        date,
-        time,
-        seats,
-        location,
-        price,
-        description,
-        images: [imageUrl], // Assuming `images` is an array of URLs
-        event_organizer,
-      });
-
-      try {
-        const savedEvent = await newEvent.save();
-        res.status(201).json(savedEvent);
-      } catch (err) {
-        console.error("Error creating event:", err);
-        res.status(500).json({ error: "Error creating event", details: err.message });
-      }
+      description,
+      event_organizer,
+      status,
+    } = req.body;
+    const imageUrls = req.files.map(
+      (file) => `${process.env.SERVER_URL}/Images/${path.basename(file.path)}`
+    );
+    console.log(
+      "File paths:",
+      req.files.map((file) => file.path)
+    );
+ 
+    const newEvent = new Event({
+      userId,
+      eventId,
+      eventTitle,
+      date,
+      time,
+      seats,
+      location,
+      price,
+      description,
+      images: imageUrls,
+      event_organizer,
+      status,
     });
 
+    try {
+      const savedEvent = await newEvent.save();
+      return res.status(201).json(savedEvent); // Ensure return here
+    } catch (err) {
+      console.error("Error creating event:", err);
+      return res
+        .status(500)
+        .json({ error: "Error creating event", details: err.message }); // Ensure return here
+    }
   } catch (error) {
     console.error("Error:", error);
-    res.status(500).json({ error: "Internal Server Error", details: error.message });
+    return res
+      .status(500)
+      .json({ error: "Internal Server Error", details: error.message }); // Ensure return here
   }
-
 };
 
 // *****************
+// Get approved events
+// *****************
+// exports.getApprovedEvents = async (req, res) => {
+//   try {
+
+//     const events = await Event.findOne({ status: "approved" });
+//     console.log(events.status);
+//     res.json(events);
+//   } catch (error) {
+//     res.status(500).send("Server error");
+//   }
+// };
+// *****************
 // Update event status
 // *****************
-
 exports.updatedEventStatus = async (req, res) => {
   try {
     const { status } = req.body;
@@ -187,8 +194,10 @@ exports.updatedEventStatus = async (req, res) => {
 
 exports.updateEvent = async (req, res) => {
   try {
+    const { status } = req.body;
     const eventId = req.params.id;
     const updatedData = req.body;
+
     const event = await Event.findByIdAndUpdate(eventId, updatedData, {
       new: true,
     });

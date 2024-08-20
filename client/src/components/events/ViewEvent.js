@@ -36,7 +36,47 @@ const data = [
 
 const ViewEvent = () => {
   const { id } = useParams();
+  const [user, setUser] = useState([]);
   const [viewEvent, setViewEvent] = useState([]);
+  const [error, setError] = useState(null);
+  const [ticketSold, setTicketSold] = useState([]);
+  useEffect(() => {
+    const fetchTicketSold = async () => {
+      try {
+        const response = await axios.get(
+          `${constant.apiUrl}/events/stats`
+        );
+        setTicketSold(response.data);
+       
+      } catch (err) {
+        setError("Error fetching sold tickets");
+        console.error(err);
+      }
+    };
+
+    fetchTicketSold();
+  }, []);
+  console.log(ticketSold);
+  // useEffect(() => {
+  //   const fetchUsers = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         `${constant.apiUrl}/users/getUserByEvent`,
+  //         {
+  //           params: { eventId: id },
+  //         }
+  //       );
+  //     setUser(response.data);
+       
+  //     } catch (err) {
+  //       setError("Error fetching users.");
+  //       console.error(err);
+  //     }
+  //   };
+
+  //   fetchUsers();
+  // }, [id]);
+  console.log(user);
   useEffect(() => {
     axios
       .get(`${constant.apiUrl}/events/${id}`)
@@ -49,39 +89,24 @@ const ViewEvent = () => {
         console.error("Error fetching event:", error);
       });
   }, [id]);
-  console.log(viewEvent);
-  const [rowData] = useState([
-    {
-      id: 1,
-      name: "Dummy",
-      email: "abc@gmail.com",
-      user_role: "Organizer",
-      registeration_date: "2024-07-15",
-      status: "active",
-      tickets_purchased: "20",
-    },
-    {
-      id: 2,
-      name: "Dummy",
-      email: "abc@gmail.com",
-      user_role: "Organizer",
-      registeration_date: "2024-07-15",
-      status: "active",
-      tickets_purchased: "10",
-    },
-  ]);
+
   const [columnDefs] = useState([
-    { headerName: "User ID", field: "id", filter: true, floatingFilter: true },
+    {
+      headerName: "User ID",
+      field: "userId",
+      filter: true,
+      floatingFilter: true,
+    },
     {
       headerName: "User Name",
-      field: "name",
+      field: "userName",
       filter: true,
       floatingFilter: true,
     },
     { headerName: "Email", field: "email", filter: true, floatingFilter: true },
     {
       headerName: "User Role",
-      field: "user_role",
+      field: "userRole",
       filter: true,
       floatingFilter: true,
     },
@@ -109,9 +134,7 @@ const ViewEvent = () => {
   const handleGoBack = () => {
     navigate(-1);
   };
-  const organizerName = viewEvent.organizer
-    ? `${viewEvent.organizer.firstName} ${viewEvent.organizer.lastName}`
-    : "Unknown";
+  
   return (
     <>
       <Grid container sx={{ marginTop: "8%", marginBottom: "2%" }} spacing={3}>
@@ -158,7 +181,9 @@ const ViewEvent = () => {
                 sx={{ fontFamily: "Montserrat, sans-serif", textAlign: "left" }}
               >
                 <span style={{ fontWeight: "500" }}>Event Organizer:</span>
-                <span style={{ fontWeight: "500" }}>{viewEvent.event_organizer}</span>
+                <span style={{ fontWeight: "500" }}>
+                  {viewEvent.event_organizer}
+                </span>
               </Typography>
             </Grid>
             <Grid item xs={12} sm={6} md={6}>
@@ -252,7 +277,7 @@ const ViewEvent = () => {
                 variant="h3"
                 sx={{ fontFamily: "Montserrat, sans-serif" }}
               >
-                100
+                {viewEvent.seats}
               </Typography>
               <Typography
                 variant="p"
@@ -283,7 +308,7 @@ const ViewEvent = () => {
                 variant="h3"
                 sx={{ fontFamily: "Montserrat, sans-serif" }}
               >
-                50
+                {ticketSold.totalTicketsSold}
               </Typography>
               <Box sx={{ height: 300 }}>
                 <ResponsiveContainer width="100%" height="100%">
@@ -321,7 +346,7 @@ const ViewEvent = () => {
             style={{ height: 400, width: "100%" }}
           >
             <AgGridReact
-              rowData={rowData}
+              rowData={user}
               columnDefs={columnDefs}
               pagination={true}
               paginationPageSize={6}

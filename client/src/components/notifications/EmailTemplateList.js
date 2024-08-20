@@ -1,4 +1,6 @@
-import React, {useState} from 'react';
+import React, { useEffect, useState } from "react";
+import axios from 'axios';
+import constant from '../../constant';
 import { useNavigate } from 'react-router-dom';
 import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Typography, Grid
     , Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Slide, Snackbar, Alert
@@ -6,29 +8,42 @@ import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRo
 import { Edit as EditIcon, Delete as DeleteIcon, AddCircle as AddCircleIcon } from '@mui/icons-material';
 import SendIcon from '@mui/icons-material/Send';
 
-const emailTemplates = [
-  { id: 1, name: 'Welcome Email', subject: 'Welcome to Our Service', body: 'Hello, welcome to our service!' },
-  { id: 2, name: 'Reset Password', subject: 'Reset Your Password', body: 'Click here to reset your password.' },
-  // Add more templates as needed
-];
+
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
   });
 const EmailTemplateList = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [emailTemplate,setEmailTemplate] = useState([]);
   const [dialogOpen, setDialogOpen] = useState(false);
 const [snackbarOpen, setSnackbarOpen] = useState(false);
 const [snackbarMessage, setSnackbarMessage] = useState('');
 const [snackbarSeverity, setSnackbarSeverity] = useState('success');
-
+const [emailTemplateToDelete,setEmailTemplateToDelete] = useState(null);
+useEffect(() => {
+  const fetchEmailTemplates= async () => {
+    try {
+      const emailTemplates = await axios.get(`${constant.apiUrl}/email-templates/`);
+      console.log(emailTemplates.data);
+      setEmailTemplate(emailTemplates.data);
+    } catch (error) {
+      setError("Error fetching blogs");
+    } finally {
+      setLoading(false);
+    }
+  };
+  fetchEmailTemplates();
+}, []);
   const handleEdit = (id) => {
+    console.log(id);
     navigate(`/email-templates/edit/${id}`);
   };
 
   const handleDelete = (id) => {
+    setEmailTemplateToDelete(id);
     setDialogOpen(true);
-
-    // Implement delete functionality here
     console.log('Delete template with ID:', id);
   };
 
@@ -38,13 +53,45 @@ const [snackbarSeverity, setSnackbarSeverity] = useState('success');
   const handleDialogClose = () => {
     setDialogOpen(false);
 };
-const handleDialogConfirm = () => {
-    setSnackbarMessage('Template Deleted Successfully!');
-    setSnackbarSeverity('success');
+const handleDialogConfirm = async(id) => {
+  if (emailTemplateToDelete === null) return;
+
+  try {
+    const response = await fetch(
+      `${constant.apiUrl}/email-templates/${emailTemplateToDelete}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (response.ok) {
+      // Successfully deleted
+      console.log("Email Template Deleted Successfully");
+
+      setEmailTemplate((prevPosts) => {
+        const updatedEmailTemplate = prevPosts.filter(
+          (email) => email._id !== emailTemplateToDelete
+        );
+        console.log("Updated email template:", updatedEmailTemplate); // Log the updated state
+        return updatedEmailTemplate;
+      });
+    } else {
+      console.error(`Failed to delete email template: ${response.statusText}`);
+    }
+  } catch (error) {
+    console.error("Error:", error);
+  } finally {
+    setDialogOpen(false); // Close the dialog after handling
+    setEmailTemplateToDelete(null);
+    setSnackbarMessage("Email Template Deleted Successfully!");
+    setSnackbarSeverity("success");
     setDialogOpen(false);
     setSnackbarOpen(true);
-    // Handle form submission logic (e.g., send data to the server)
-  };
+  }
+}
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
   };
@@ -69,7 +116,7 @@ const handleDialogConfirm = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {emailTemplates.map((template) => (
+                        {emailTemplate.map((template) => (
                         <TableRow key={template.id}>
                             <TableCell>{template.name}</TableCell>
                             <TableCell>{template.subject}</TableCell>
@@ -79,10 +126,10 @@ const handleDialogConfirm = () => {
                                 </SendIcon>
                             </TableCell> */}
                             <TableCell>
-                            <IconButton onClick={() => handleEdit(template.id)} sx={{fontSize: 16, color: "#a370f7"}}>
+                            <IconButton onClick={() => handleEdit(template.emailId)} sx={{fontSize: 16, color: "#a370f7"}}>
                                 <EditIcon />
                             </IconButton>
-                            <IconButton onClick={() => handleDelete(template.id)} sx={{fontSize: 16, color: "#dc3545"}}>
+                            <IconButton onClick={() => handleDelete(template._id)} sx={{fontSize: 16, color: "#dc3545"}}>
                                 <DeleteIcon />
                             </IconButton>
                             </TableCell>

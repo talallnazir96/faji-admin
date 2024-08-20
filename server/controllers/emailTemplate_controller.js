@@ -6,6 +6,7 @@ const Email = require("../models/email_model");
 exports.getEmailTemplate = async (req, res) => {
   try {
     const emailTemplate = await Email.find();
+ 
     res.json(emailTemplate);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -53,9 +54,11 @@ exports.createEmail = async (req, res) => {
 // *********************
 exports.updateEmailTemplate= async(req,res)=>{
   try {
-    const {id} = req.params;
+    const { id } = req.params;
     console.log(id);
+
     const updatedData = req.body;
+    console.log(updatedData);
     const emailTemplate = await Email.findByIdAndUpdate(id, updatedData, {
       new: true,
     });

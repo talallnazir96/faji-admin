@@ -1,60 +1,49 @@
 const User = require("../models/user_model");
+const Event = require("../models/events_model");
+const formatDate = (date) => {
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+  const day = String(d.getDate()).padStart(2, "0");
 
+  return `${year}-${month}-${day}`;
+};
 
-// **********
-// Get Users
-// *********
-exports.getAllUsers = async(req,res)=>{
-    try {
-        const users = await User.find();
-        res.json(users);
-      } catch (error) {
-        res.status(500).json({ message: error.message });
-      }
-}
-// *******************
-// Get User by userid
-// *******************
-exports.getUserById =async(req,res)=>{
-    const { userId }  = req.params;
-    console.log(userId);
-    try {
-      const user = await User.findOne({ userId: userId});
-      if (!user) {
-        return res.status(404).json({ error: 'User not found' });
-      }
-      res.status(200).json(user);
-    } catch (err) {
-      console.error('Error fetching user:', err);
-      res.status(500).json({ error: 'Error fetching user', details: err.message });
-    }
-}
 // **********
 // Add User
 // *********
 exports.addUser = async (req, res) => {
   const {
+    eventId,
     userId,
     userName,
     email,
     password,
-    registrationDate,
+    // registrationDate,
     userRole,
     status,
-    ticketsPurchased,
+    // ticketsPurchased,
   } = req.body;
-  const newUser = await new User({
-    userId,
-    userName,
-    email,
-    password,
-    registrationDate,
-    userRole,
-    status,
-    ticketsPurchased,
-  });
+  
+  if (!eventId) {
+    return res.status(400).json({ error: "event ID is required" });
+  }
 
   try {
+
+    // Create a new user with the event IDs
+    const newUser = new User({
+      userId,
+      userName,
+      email,
+      password,
+      userRole,
+      status,
+      eventId, 
+      registrationDate: new Date()
+    });
+
+    // Save the user to the database
     const savedUser = await newUser.save();
     res.status(201).json(savedUser);
   } catch (err) {
@@ -62,35 +51,111 @@ exports.addUser = async (req, res) => {
     res.status(500).json({ error: "Error adding user", details: err.message });
   }
 };
+// *********************
+// Get Users By Event Id
+// *********************
+exports.getUsersByEvent = async (req, res) => {
+  const eventId = req.query.eventId;
 
+  try {
+    // Find users who have the eventId in their events array
+    const users = await User.find({  eventId });
+    if (users.length === 0) {
+      return res.status(404).json({ error: "No users found for this event" });
+    }
+
+    res.status(200).json(users);
+  } catch (err) {
+    console.error("Error fetching users by event:", err);
+    res
+      .status(500)
+      .json({ error: "Error fetching users", details: err.message });
+  }
+};
+// **********
+// Get Users
+// *********
+exports.getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find();
+    const formattedDate = users.map((user) => ({
+      ...user._doc,
+      registrationDate: formatDate(user.registrationDate),
+    }));
+    
+    return res.json(formattedDate);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+// *******************
+// Get User by userid
+// *******************
+exports.getUserById = async (req, res) => {
+  try {
+    const user = await User.findOne(req.params.id);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    res.status(200).json(user);
+  } catch (err) {
+    console.error("Error fetching user:", err);
+    res
+      .status(500)
+      .json({ error: "Error fetching user", details: err.message });
+  }
+};
 // **********
 // update User
 // ***********
- exports.updateUser = async(req,res)=>{
-    try {
-        const userId = req.params.id;
-        const updatedData = req.body;
-        const user = await User.findByIdAndUpdate(userId, updatedData, {
-          new: true,
-        });
-        res.status(200).json({ message: "User updated", user});
-      } catch (error) {
-        res.status(500).json({ error: "Error updating user" });
-      }
-
- }
+exports.updateUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    console.log(id);
+    const updatedData = req.body;
+    const user = await User.findByIdAndUpdate(id, updatedData, {
+      new: true,
+    });
+    res.status(200).json({ message: "User updated", user });
+  } catch (error) {
+    res.status(500).json({ error: "Error updating user" });
+  }
+};
 // **********
 // delete User
 // ***********
-exports.deleteUser =async(req,res)=>{
-    try {
-        const userId = req.params.id;
-        await User.findByIdAndDelete(userId);
-        res.status(200).json({ message: "User deleted" });
-      } catch (error) {
-        console.error("Error creating User:", err);
-        res
-          .status(500)
-          .json({ error: "Error creating user", details: err.message });
-      }
-}
+exports.deleteUser = async (req, res) => {
+  try {
+    await User.findByIdAndDelete(req.params.id);
+    res.status(200).json({ message: "User deleted" });
+  } catch (error) {
+    console.error("Error deleting User:", error);
+    res
+      .status(500)
+      .json({ error: "Error deleting user", details: error.message });
+  }
+};
+// **************************
+// Update User status and Role
+// **************************
+
+exports.updatedUserStatusAndRole = async (req, res) => {
+  try {
+    const { status, userRole } = req.body;
+    console.log(status);
+    console.log(userRole);
+    const userId = req.params.id;
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { status },
+      { userRole },
+      { new: true }
+    );
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.json({ message: "User status updated", user });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error });
+  }
+};

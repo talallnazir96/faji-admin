@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import {TextField, Box, Button, Typography, Input, InputAdornment, FormControl, FormHelperText, Grid
     , Snackbar, Alert, MenuItem, Chip, OutlinedInput
 } from '@mui/material';
+import axios from 'axios';
+import constant from '../../constant';
+import {useNavigate} from 'react-router-dom';
 import {  useMediaQuery, useTheme } from '@mui/material';
 
 const role = [
@@ -29,6 +32,7 @@ const status = [
     }
   ];
 const AddUser = () => {
+    const navigate = useNavigate();
     const theme = useTheme();
   const isXs = useMediaQuery(theme.breakpoints.only('xs'));
   const isSm = useMediaQuery(theme.breakpoints.only('sm'));
@@ -48,10 +52,12 @@ const AddUser = () => {
     const [selectedItems, setSelectedItems] = useState([]);
 
     const [formData, setFormData] = useState({
-        username: '',
+        userName: '',
+        password:'',
         email: '',
-        role: '',
         status: '',
+        userRole: '',
+   
     });
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
@@ -63,12 +69,46 @@ const AddUser = () => {
         [name]: value,
         }));
     };
-    const handleSubmit = (e) => {
+    const handleSubmit = async(e) => {
         e.preventDefault();
-        setSnackbarOpen(true)
-        setSnackbarMessage('Form submitted successfully!');
-        setSnackbarSeverity('success');
-        console.log('Form data submitted:', formData);
+        const payload = {
+            userName: formData.userName,
+            password: formData.password,
+            email: formData.email,
+            status: formData.status,
+            userRole:formData.userRole
+          };
+          console.log(payload);
+      
+      
+          try {
+            const response = await axios.post(`${constant.apiUrl}/users/add-user`, payload, {
+              headers: {
+                "Content-Type": "application/json",
+              },
+            });
+        
+            console.log("Response:", response.data);
+        
+            if (response.status === 200 || response.status === 201) {
+              setSnackbarOpen(true);
+              setSnackbarMessage("Form submitted successfully!");
+              setSnackbarSeverity("success");
+              navigate("/users");
+              console.log("Form data submitted:", formData);
+            } else {
+              setSnackbarOpen(true);
+              setSnackbarMessage("An error occurred!");
+              setSnackbarSeverity("error");
+            }
+          } catch (error) {
+           
+            
+            setSnackbarOpen(true);
+            setSnackbarMessage("An error occurred!");
+            setSnackbarSeverity("error");
+          }
+      
     };
     const handleSnackbarClose = () => {
     setSnackbarOpen(false);
@@ -90,8 +130,8 @@ const AddUser = () => {
                         'aria-label': 'username',
                     }}
                     fullWidth
-                    name="username"
-                    value={formData.username}
+                    name="userName"
+                    value={formData.userName}
                     onChange={handleChange}
                     type="text"
                     />
@@ -143,8 +183,8 @@ const AddUser = () => {
                         helpertext="User Role"
                         variant="standard"
                         fullWidth
-                        name="role"
-                        value={formData.role}
+                        name="userRole"
+                        value={formData.userRole}
                         onChange={handleChange}
                         >
                         {role.map((option) => (

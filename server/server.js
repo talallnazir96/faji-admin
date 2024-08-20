@@ -24,13 +24,12 @@ const path = require("path");
 const PORT = 5000;
 const server = http.createServer(app);
 const io = socketIo(server);
-const fileUpload = require('express-fileupload'); 
+
 //MiddleWare
 app.use(cors());
 app.use(express.json());
 app.use(errorMiddleware);
 app.use(bodyParser.json());
-app.use(fileUpload());
 //Routes
 app.use('/api',adminRoutes);
 app.use("/api/auth", authRoutes);
@@ -53,6 +52,8 @@ app.use("/api/reports", reportsRoutes);
 app.use("/api/email-templates", emailsRoutes);
 
 app.use("/api/app-notifications", notificationsRoutes);
+
+app.use(express.static('public'));
 
 // Handle client connection
 io.on("connection", (socket) => {

@@ -54,6 +54,7 @@ const Blogs = () => {
 
     fetchBlogs();
   }, []);
+  console.log(blogs);
   const getVariant = () => {
     if (isXs) return "h5";
     if (isSm) return "h5";
@@ -192,7 +193,7 @@ const Blogs = () => {
                     component="img"
                     alt="green iguana"
                     height="140"
-                    image={Image}
+                    image={blog.image}
                   />
                   <CardContent>
                     <Typography gutterBottom variant="h5" component="div">

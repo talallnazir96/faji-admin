@@ -1,5 +1,12 @@
 const Notification = require("../models/notification_model");
+const formatDate = (date) => {
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+  const day = String(d.getDate()).padStart(2, "0");
 
+  return `${year}-${month}-${day}`;
+};
 // ************
 // Get All notification
 // ****************
@@ -7,6 +14,12 @@ const Notification = require("../models/notification_model");
 exports.getAllNotifications = async (req, res) => {
   try {
     const notifications = await Notification.find();
+    const formattedDate = notifications.map((notification) => ({
+      ...notification._doc,
+      date: formatDate(notification.date),
+    }));
+    res;
+    return res.json(formattedDate);
     res.json(notifications);
   } catch (error) {
     res.status(400).json("error");

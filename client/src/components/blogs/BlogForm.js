@@ -12,6 +12,7 @@ import {
   Alert,
   IconButton,
 } from "@mui/material";
+import constant from "../../constant";
 import { AddAPhoto, Delete } from "@mui/icons-material";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -22,37 +23,53 @@ const BlogForm = () => {
     title: "",
     content: " ",
     short_desc: "",
+    image: "",
   });
   const [isEditMode, setIsEditMode] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
-
+  const [previewImage, setPreviewImage] = useState("");
   const [image, setImage] = useState(null);
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     if (file) {
-      setImage(URL.createObjectURL(file));
+      setImage(file);
     }
   };
 
   const handleDeleteImage = () => {
     setImage(null);
+    setPreviewImage(template.image);
   };
-
   useEffect(() => {
-    
-    axios.get(`http://localhost:5000/api/blogs/${id}`)
-      .then((response) => {
-        setTemplate(response.data);
-        console.log(response.data);
-      })
-      .catch((error) => {
-        console.error('Error fetching post data:', error);
-      });
+    if (id) {
+      console.log(id);
+      axios
+        .get(`${constant.apiUrl}/blogs/${id}`)
+        .then((response) => {
+          setTemplate(response.data);
+          console.log(response.data);
+          setIsEditMode(true);
+        })
+        .catch((error) => {
+          console.error("Error fetching post data:", error);
+        });
+    } else {
+      setIsEditMode(false);
+    }
   }, [id]);
-
+  useEffect(() => {
+    if (image) {
+      setPreviewImage(URL.createObjectURL(image));
+    }
+    return () => {
+      if (image) {
+        URL.revokeObjectURL(URL.createObjectURL(image));
+      }
+    };
+  }, [image]);
   const handleChange = (event) => {
     const { name, value } = event.target;
     setTemplate((prevTemplate) => ({
@@ -62,18 +79,22 @@ const BlogForm = () => {
   };
 
   const handleSubmit = async (event) => {
-    console.log(template);
     event.preventDefault();
-    const payload = {
-      title: template.title,
-     content: template.content,
-      imageUrl: image, // Ensure this matches your backend's expected format
-    };
-    console.log("Submitting payload:", payload);
+    // Create a new FormData object
+    const formData = new FormData();
+    formData.append("title", template.title);
+    formData.append("content", template.content);
+    formData.append("short_desc", template.short_desc);
+
+    // Append the image file if it exists
+    if (image) {
+      formData.append("image", image);
+    }
+    console.log("Submitting payload:", formData);
     try {
       const url = isEditMode
-        ? `http://localhost:5000/api/blogs/${id}` // Update endpoint if editing
-        : "http://localhost:5000/api/blogs/"; // Create endpoint if adding
+        ? `${constant.apiUrl}/blogs/${id}` // Update endpoint if editing
+        : `${constant.apiUrl}/blogs/`; // Create endpoint if adding
       console.log(id);
       const method = isEditMode ? "put" : "post";
 
@@ -81,9 +102,9 @@ const BlogForm = () => {
         method,
         url,
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "multipart/form-data", // Important for file uploads
         },
-        data: payload,
+        data: formData,
       });
 
       console.log("Response:", response.data);
@@ -205,7 +226,7 @@ const BlogForm = () => {
         >
           Cover Image
         </Typography>
-        {image && (
+        {(previewImage || isEditMode) && (
           <Grid item xs={12}>
             <Box
               sx={{
@@ -223,7 +244,7 @@ const BlogForm = () => {
                   objectFit: "cover",
                   borderRadius: "4px",
                 }}
-                src={image}
+                src={previewImage}
                 alt="uploaded preview"
               />
               <IconButton
@@ -248,8 +269,8 @@ const BlogForm = () => {
               accept="image/*"
               style={{ display: "none" }}
               id="upload-image"
-              multiple
               type="file"
+              name="image"
               onChange={handleImageChange}
             />
             <label htmlFor="upload-image">
