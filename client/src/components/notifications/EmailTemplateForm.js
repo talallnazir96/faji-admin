@@ -66,36 +66,42 @@ const EmailTemplateForm = () => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
   useEffect(() => {
-    axios
-      .get(`${constant.apiUrl}/email-templates/${id}`)
-      .then((response) => {
-        const data = response.data;
-        // console.log(data);
-
-        setTemplate(data);
-      })
-      .catch((error) => {
-        console.error("Error fetching email template data:", error);
-      });
-  }, [id]);
-  console.log(template);
-  useEffect(() => {
     if (id) {
-      console.log(`Edit mode activated for ID: ${id}`); // Debug log
-      const existingTemplate = initialTemplates.find(
-        (t) => t.id === parseInt(id, 10)
-      );
-      if (existingTemplate) {
-        setTemplate(existingTemplate);
-        setIsEditMode(true);
-      } else {
-        console.error("Template not found for ID:", id); // Debug log
-      }
+      console.log(id);
+      setIsEditMode(true);
+      axios
+        .get(`${constant.apiUrl}/email-templates/${id}`)
+        .then((response) => {
+          setTemplate(response.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching email template data:", error);
+          setSnackbarOpen(true);
+          setSnackbarMessage("Error fetching email template data!");
+          setSnackbarSeverity("error");
+        });
     } else {
-      console.log("Create mode activated"); // Debug log
       setIsEditMode(false);
     }
   }, [id]);
+  console.log(template);
+  // useEffect(() => {
+  //   if (id) {
+  //     console.log(`Edit mode activated for ID: ${id}`); // Debug log
+  //     const existingTemplate = initialTemplates.find(
+  //       (t) => t.id === parseInt(id, 10)
+  //     );
+  //     if (existingTemplate) {
+  //       setTemplate(existingTemplate);
+  //       setIsEditMode(true);
+  //     } else {
+  //       console.error("Template not found for ID:", id); // Debug log
+  //     }
+  //   } else {
+  //     console.log("Create mode activated"); // Debug log
+  //     setIsEditMode(false);
+  //   }
+  // }, [id]);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -109,20 +115,31 @@ const EmailTemplateForm = () => {
     event.preventDefault();
     try {
       const url = isEditMode
-        ? `${constant.apiUrl}/email-templates/${template._id}`  // Correct URL format with ID
+        ? `${constant.apiUrl}/email-templates/${id}` // Correct URL format with ID
         : `${constant.apiUrl}/email-templates/`;
-  
+
       const response = isEditMode
-        ? await axios.put(url, template, { headers: { "Content-Type": "application/json" } })
-        : await axios.post(url, template, { headers: { "Content-Type": "application/json" } });
-  
+        ? await axios.put(url, template, {
+            headers: { "Content-Type": "application/json" },
+          })
+        : await axios.post(url, template, {
+            headers: { "Content-Type": "application/json" },
+          });
+
       console.log("Email Template operation successful:", response.data);
       setSnackbarOpen(true);
-      setSnackbarMessage(isEditMode ? "Email Template updated successfully!" : "Email Template created successfully!");
+      setSnackbarMessage(
+        isEditMode
+          ? "Email Template updated successfully!"
+          : "Email Template created successfully!"
+      );
       setSnackbarSeverity("success");
       navigate("/email-templates");
     } catch (error) {
-      console.error("Error creating/updating email template:", error.response ? error.response.data : error.message);
+      console.error(
+        "Error creating/updating email template:",
+        error.response ? error.response.data : error.message
+      );
       setSnackbarOpen(true);
       setSnackbarMessage("Error creating/updating email template!");
       setSnackbarSeverity("error");

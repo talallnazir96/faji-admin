@@ -72,35 +72,25 @@ const NotificationForm = () => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
   useEffect(() => {
-    axios
-      .get(`${constant.apiUrl}/app-notifications/${id}`)
-      .then((response) => {
-        const data = response.data;
-        data.date = formatDate(data.date);
-        setTemplate(data);
-      })
-      .catch((error) => {
-        console.error("Error fetching email template data:", error);
-      });
-  }, [id]);
-  console.log(template);
-  useEffect(() => {
     if (id) {
-      console.log(`Edit mode activated for ID: ${id}`); // Debug log
-      const existingTemplate = initialTemplates.find(
-        (t) => t.id === parseInt(id, 10)
-      );
-      if (existingTemplate) {
-        setTemplate(existingTemplate);
-        setIsEditMode(true);
-      } else {
-        console.error("Template not found for ID:", id); // Debug log
-      }
-    } else {
-      console.log("Create mode activated"); // Debug log
+      setIsEditMode(true);
+      axios
+        .get(`${constant.apiUrl}/app-notifications/${id}`)
+        .then((response) => {
+          const data = response.data;
+          data.date = formatDate(data.date);
+          setTemplate(data);
+        })
+        .catch((error) => {
+          console.error("Error fetching email template data:", error);
+        });
+    }
+    else{
       setIsEditMode(false);
     }
   }, [id]);
+  console.log(template);
+  
 
   const handleChange = (event) => {
     const { name, value } = event.target;

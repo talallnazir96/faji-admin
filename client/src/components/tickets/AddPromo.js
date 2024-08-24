@@ -16,6 +16,7 @@ import {
   Chip,
   OutlinedInput,
 } from "@mui/material";
+import constant from "../../constant";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -67,7 +68,7 @@ const EditPromo = () => {
     };
     console.log("Submitting payload:", payload);
     try {
-        const url = "http://localhost:5000/api/promo/";
+        const url = `${constant.apiUrl}/promo/`;
         
         const response = await axios.post(url, payload, {
           headers: {

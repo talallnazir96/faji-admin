@@ -85,10 +85,49 @@ const PushNotificationList = () => {
     navigate(`/app-notifications/edit/${id}`);
   };
 
-  const handleSend = (id) => {
-    setSnackbarMessage("Notification sent Successfully!");
-    setSnackbarSeverity("success");
-    setSnackbarOpen(true);
+  const handleSend = async (id) => {
+    const notification = notifications.find(n => n._id === id);
+
+    const payload = {
+      title: notification.title,
+      date: notification.date,
+      type: notification.type,
+      description: notification.description,
+    };
+    console.log('submitting payload',payload);
+    if (!payload.title || !payload.description || !payload.type) {
+      console.error("Missing required fields in payload:", payload);
+      setSnackbarOpen(true);
+      setSnackbarMessage("Please fill all required fields!");
+      setSnackbarSeverity("error");
+      return;
+    }
+    try {
+      const response = await axios.post(
+        `${constant.apiUrl}/app-notifications/send-notification/${id}`,
+        payload,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (response.status === 200 || response.status === 201) {
+        console.log("Notification sent successfully:", response.data);
+        setSnackbarOpen(true);
+        setSnackbarMessage("Notification sent Successfully!");
+        setSnackbarSeverity("success");
+      } else {
+        setSnackbarOpen(true);
+        setSnackbarMessage("An error occurred!");
+        setSnackbarSeverity("error");
+      }
+    } catch (error) {
+      console.error("Error sending notification:", error.response.data);
+      setSnackbarOpen(true);
+      setSnackbarMessage("Error sending notification!");
+      setSnackbarSeverity("error");
+    }
   };
 
   const handleDelete = (id) => {
@@ -140,8 +179,6 @@ const PushNotificationList = () => {
       setDialogOpen(false);
       setSnackbarOpen(true);
     }
-
-  
   };
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
@@ -192,20 +229,20 @@ const PushNotificationList = () => {
               </TableHead>
               <TableBody>
                 {notifications.map((notification) => (
-                  <TableRow key={notification.notification_id}>
+                  <TableRow >
                     <TableCell>{notification.title}</TableCell>
                     <TableCell>{notification.date}</TableCell>
                     <TableCell>{notification.description}</TableCell>
                     <TableCell>{notification.type}</TableCell>
                     <TableCell>
                       <IconButton
-                        onClick={() => handleSend(notification.id)}
+                        onClick={() => handleSend(notification._id)}
                         sx={{ fontSize: 24, color: "#FF4343" }}
                       >
                         <SendIcon />
                       </IconButton>
                       <IconButton
-                        onClick={() => handleEdit(notification.notification_id)}
+                        onClick={() => handleEdit(notification._id)}
                         sx={{ fontSize: 16, color: "#a370f7" }}
                       >
                         <EditIcon />

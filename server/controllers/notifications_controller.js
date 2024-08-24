@@ -30,12 +30,8 @@ exports.getAllNotifications = async (req, res) => {
 // Get notification by ID
 // **********************
 exports.getNotificationById = async (req, res) => {
-  const { notification_id } = req.params;
-  console.log(notification_id);
   try {
-    const notification = await Notification.findOne({
-      notification_id: notification_id,
-    });
+    const notification = await Notification.findById(req.params.id);
     if (!notification) {
       return res.status(404).json({ error: "Notification not found" });
     }
@@ -53,9 +49,8 @@ exports.getNotificationById = async (req, res) => {
 // ****************
 
 exports.addNotification = async (req, res) => {
-  const { notification_id, title, date, type, description } = req.body;
+  const { title, date, type, description } = req.body;
   const newNotification = await new Notification({
-    notification_id,
     title,
     date,
     type,
@@ -102,4 +97,3 @@ exports.deleteNotification = async (req, res) => {
       .json({ error: "Error deleting notification", details: err.message });
   }
 };
-

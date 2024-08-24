@@ -36,12 +36,13 @@ const BlogForm = () => {
     const file = event.target.files[0];
     if (file) {
       setImage(file);
+      setPreviewImage(URL.createObjectURL(file));
     }
   };
 
   const handleDeleteImage = () => {
     setImage(null);
-    setPreviewImage(template.image);
+    setPreviewImage("");
   };
   useEffect(() => {
     if (id) {
@@ -51,6 +52,7 @@ const BlogForm = () => {
         .then((response) => {
           setTemplate(response.data);
           console.log(response.data);
+          setPreviewImage(response.data.image);
           setIsEditMode(true);
         })
         .catch((error) => {
@@ -60,16 +62,7 @@ const BlogForm = () => {
       setIsEditMode(false);
     }
   }, [id]);
-  useEffect(() => {
-    if (image) {
-      setPreviewImage(URL.createObjectURL(image));
-    }
-    return () => {
-      if (image) {
-        URL.revokeObjectURL(URL.createObjectURL(image));
-      }
-    };
-  }, [image]);
+  
   const handleChange = (event) => {
     const { name, value } = event.target;
     setTemplate((prevTemplate) => ({
@@ -80,21 +73,18 @@ const BlogForm = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    // Create a new FormData object
     const formData = new FormData();
     formData.append("title", template.title);
     formData.append("content", template.content);
     formData.append("short_desc", template.short_desc);
-
-    // Append the image file if it exists
     if (image) {
       formData.append("image", image);
     }
     console.log("Submitting payload:", formData);
     try {
       const url = isEditMode
-        ? `${constant.apiUrl}/blogs/${id}` // Update endpoint if editing
-        : `${constant.apiUrl}/blogs/`; // Create endpoint if adding
+        ? `${constant.apiUrl}/blogs/${id}`
+        : `${constant.apiUrl}/blogs/`; 
       console.log(id);
       const method = isEditMode ? "put" : "post";
 
@@ -102,7 +92,7 @@ const BlogForm = () => {
         method,
         url,
         headers: {
-          "Content-Type": "multipart/form-data", // Important for file uploads
+          "Content-Type": "multipart/form-data", 
         },
         data: formData,
       });
@@ -244,7 +234,7 @@ const BlogForm = () => {
                   objectFit: "cover",
                   borderRadius: "4px",
                 }}
-                src={previewImage}
+                src={previewImage || template.image}
                 alt="uploaded preview"
               />
               <IconButton

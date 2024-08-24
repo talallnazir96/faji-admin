@@ -76,7 +76,7 @@ function Events() {
   useEffect(() => {
     fetchEvents(statusFilter); // Fetch events with the default status filter
   }, [statusFilter]);
-  // console.log(events);
+  console.log(events);
 
   const handleStatusChange = async (event, eventId) => {
     const newStatus = event.target.value;
@@ -117,12 +117,7 @@ function Events() {
   };
 
   const [columnDefs] = useState([
-    {
-      headerName: "Event Id",
-      field: "eventId",
-      filter: true,
-      floatingFilter: true,
-    },
+  
     {
       headerName: "Title",
       field: "eventTitle",
@@ -271,7 +266,6 @@ function Events() {
       setDialogOpen(false);
       setSnackbarOpen(true);
     }
-
   };
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);

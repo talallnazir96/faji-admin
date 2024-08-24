@@ -35,6 +35,14 @@ const data = [
 ];
 
 const ViewEvent = () => {
+  const formatDate = (date) => {
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+    const day = String(d.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  };
   const { id } = useParams();
   const [user, setUser] = useState([]);
   const [viewEvent, setViewEvent] = useState([]);
@@ -43,11 +51,8 @@ const ViewEvent = () => {
   useEffect(() => {
     const fetchTicketSold = async () => {
       try {
-        const response = await axios.get(
-          `${constant.apiUrl}/events/stats`
-        );
+        const response = await axios.get(`${constant.apiUrl}/events/stats`);
         setTicketSold(response.data);
-       
       } catch (err) {
         setError("Error fetching sold tickets");
         console.error(err);
@@ -57,26 +62,27 @@ const ViewEvent = () => {
     fetchTicketSold();
   }, []);
   console.log(ticketSold);
-  // useEffect(() => {
-  //   const fetchUsers = async () => {
-  //     try {
-  //       const response = await axios.get(
-  //         `${constant.apiUrl}/users/getUserByEvent`,
-  //         {
-  //           params: { eventId: id },
-  //         }
-  //       );
-  //     setUser(response.data);
-       
-  //     } catch (err) {
-  //       setError("Error fetching users.");
-  //       console.error(err);
-  //     }
-  //   };
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await axios.get(
+          `${constant.apiUrl}/users/getPurchasedUser`,
+          {
+            params: { userId: viewEvent.userId },
+          }
+        );
+        const data = response.data;
+        data.registrationDate = formatDate(data.registrationDate);
+        setUser(data);
+      } catch (err) {
+        setError("Error fetching users.");
+        console.error(err);
+      }
+    };
 
-  //   fetchUsers();
-  // }, [id]);
-  console.log(user);
+    fetchUsers();
+  }, [id]);
+  console.log([user]);
   useEffect(() => {
     axios
       .get(`${constant.apiUrl}/events/${id}`)
@@ -89,7 +95,7 @@ const ViewEvent = () => {
         console.error("Error fetching event:", error);
       });
   }, [id]);
-
+console.log(viewEvent);
   const [columnDefs] = useState([
     {
       headerName: "User ID",
@@ -112,7 +118,7 @@ const ViewEvent = () => {
     },
     {
       headerName: "Registeration Date",
-      field: "registeration_date",
+      field: "registrationDate",
       filter: true,
       floatingFilter: true,
     },
@@ -134,7 +140,7 @@ const ViewEvent = () => {
   const handleGoBack = () => {
     navigate(-1);
   };
-  
+
   return (
     <>
       <Grid container sx={{ marginTop: "8%", marginBottom: "2%" }} spacing={3}>
@@ -346,7 +352,7 @@ const ViewEvent = () => {
             style={{ height: 400, width: "100%" }}
           >
             <AgGridReact
-              rowData={user}
+              rowData={[user]}
               columnDefs={columnDefs}
               pagination={true}
               paginationPageSize={6}

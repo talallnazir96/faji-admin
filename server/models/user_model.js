@@ -1,9 +1,8 @@
 const mongoose = require("mongoose");
 
 const UserSchema = new mongoose.Schema({
-  eventId: { type: mongoose.Schema.Types.ObjectId, ref: "Event" },
   userId: {
-    type: Number,
+    type: mongoose.Schema.Types.ObjectId,
   },
   userName: {
     type: String,
@@ -29,11 +28,7 @@ const UserSchema = new mongoose.Schema({
     type: String,
     default: "active", // active, inActive
   },
-  // ticketsPurchased:{
-  //   type: Number,
-  //   required:true
-
-  // }
+  ticketsPurchased: { type: Number, default: 0 }
 });
 
 module.exports = mongoose.model("Manageusers", UserSchema);

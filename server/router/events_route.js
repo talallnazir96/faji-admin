@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const upload = require("../uploads");
 const eventsController = require("../controllers/events_controller");
-
+router.route("/lastWeekEvents").get(eventsController.getLastWeekData);
 router.route("/").get(eventsController.getEvents);
 
 router.route("/total-seats").get(eventsController.totalSeats);
@@ -18,6 +18,8 @@ router.route("/:id/status").put(eventsController.updatedEventStatus);
 router.route("/update-event/:id").put(eventsController.updateEvent);
 
 router.route("/:id").delete(eventsController.deleteEvent);
+
+
 
 router.route("/?status").get(eventsController.eventsStatus);
 

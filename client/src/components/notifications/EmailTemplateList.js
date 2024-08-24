@@ -126,7 +126,7 @@ const handleDialogConfirm = async(id) => {
                                 </SendIcon>
                             </TableCell> */}
                             <TableCell>
-                            <IconButton onClick={() => handleEdit(template.emailId)} sx={{fontSize: 16, color: "#a370f7"}}>
+                            <IconButton onClick={() => handleEdit(template._id)} sx={{fontSize: 16, color: "#a370f7"}}>
                                 <EditIcon />
                             </IconButton>
                             <IconButton onClick={() => handleDelete(template._id)} sx={{fontSize: 16, color: "#dc3545"}}>

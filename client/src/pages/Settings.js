@@ -3,9 +3,11 @@ import { useParams} from 'react-router-dom';
 import { Button, Box, Typography, Input, FormControl, FormHelperText, Grid
     , Snackbar, Alert } from '@mui/material';
     import { useMediaQuery, useTheme } from '@mui/material';
-const initialTemplates = [
-    { id: 1, title: 'FAJI App', short_desc: 'Organize your events smoothly', phone_num: '+1726788954', email: 'faji@outlook.com', currency: '$' },
-  ];
+    import constant from "../constant";
+import axios from "axios";
+// const initialTemplates = [
+//     { id: 1, title: 'FAJI App', short_desc: 'Organize your events smoothly', phone_num: '+1726788954', email: 'faji@outlook.com', currency: '$' },
+//   ];
 
 const Settings = () => {
     const theme = useTheme();
@@ -31,16 +33,16 @@ const Settings = () => {
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
 
-  useEffect(() => {
-    if (id) {
-      const existingTemplate = initialTemplates.find(t => t.id === parseInt(id, 10));
-      console.log(existingTemplate)
-      if (existingTemplate) {
-        setTemplate(existingTemplate);
-        setIsEditMode(true);
-      }
-    }
-  }, [id]);
+//   useEffect(() => {
+//     if (id) {
+//       const existingTemplate = initialTemplates.find(t => t.id === parseInt(id, 10));
+//       console.log(existingTemplate)
+//       if (existingTemplate) {
+//         setTemplate(existingTemplate);
+//         setIsEditMode(true);
+//       }
+//     }
+//   }, [id]);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -50,18 +52,43 @@ const Settings = () => {
     }));
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async(event) => {
     event.preventDefault();
-    if (isEditMode) {
-        console.log("aaaaa")
-        setSnackbarOpen(true)
-        setSnackbarMessage('Settings Updated successfully!');
-        setSnackbarSeverity('success');
-    } else {
-        setSnackbarOpen(true)
-        setSnackbarMessage('Post Created successfully!');
-        setSnackbarSeverity('success');
-    }
+    const payload = {
+        title: template.title,
+        short_desc: template.short_desc,
+        phone_num: template.phone_num,
+        email: template.email,
+        currency:template.currency
+      };
+      console.log("Submitting payload:", payload);
+      try {
+          
+          const response = await axios.post(`${constant.apiUrl}/settings/`, payload, {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+      
+          console.log("Response:", response.data);
+      
+          if (response.status === 200 || response.status === 201) {
+            setSnackbarOpen(true);
+            setSnackbarMessage("Settings submitted successfully!");
+            setSnackbarSeverity("success");
+           
+          } else {
+            setSnackbarOpen(true);
+            setSnackbarMessage("An error occurred!");
+            setSnackbarSeverity("error");
+          }
+        } catch (error) {
+         
+          
+          setSnackbarOpen(true);
+          setSnackbarMessage("An error occurred!");
+          setSnackbarSeverity("error");
+        }
     
     
   };

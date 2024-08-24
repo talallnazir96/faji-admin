@@ -1,5 +1,6 @@
 const User = require("../models/user_model");
 const Event = require("../models/events_model");
+const Ticket = require("../models/tickets_model");
 const formatDate = (date) => {
   const d = new Date(date);
   const year = d.getFullYear();
@@ -14,7 +15,6 @@ const formatDate = (date) => {
 // *********
 exports.addUser = async (req, res) => {
   const {
-    eventId,
     userId,
     userName,
     email,
@@ -22,16 +22,10 @@ exports.addUser = async (req, res) => {
     // registrationDate,
     userRole,
     status,
-    // ticketsPurchased,
   } = req.body;
-  
-  if (!eventId) {
-    return res.status(400).json({ error: "event ID is required" });
-  }
 
   try {
-
-    // Create a new user with the event IDs
+    
     const newUser = new User({
       userId,
       userName,
@@ -39,8 +33,7 @@ exports.addUser = async (req, res) => {
       password,
       userRole,
       status,
-      eventId, 
-      registrationDate: new Date()
+      registrationDate: new Date(),
     });
 
     // Save the user to the database
@@ -54,22 +47,45 @@ exports.addUser = async (req, res) => {
 // *********************
 // Get Users By Event Id
 // *********************
-exports.getUsersByEvent = async (req, res) => {
-  const eventId = req.query.eventId;
+// exports.getUsersByEvent = async (req, res) => {
+//   const eventId = req.query.eventId;
+
+//   try {
+//     // Find users who have the eventId in their events array
+//     const users = await User.find({  eventId });
+//     if (users.length === 0) {
+//       return res.status(404).json({ error: "No users found for this event" });
+//     }
+
+//     res.status(200).json(users);
+//   } catch (err) {
+//     console.error("Error fetching users by event:", err);
+//     res
+//       .status(500)
+//       .json({ error: "Error fetching users", details: err.message });
+//   }
+// };
+exports.getPurchasedUser = async (req, res) => {
+  const { userId } = req.query; // Get userId from query parameters
+
+  if (!userId) {
+    return res.status(400).json({ error: "User ID is required" });
+  }
 
   try {
-    // Find users who have the eventId in their events array
-    const users = await User.find({  eventId });
-    if (users.length === 0) {
-      return res.status(404).json({ error: "No users found for this event" });
-    }
+    // Fetch user data by userId
+    const user = await User.findById(userId);
+    const formattedUser = {
+      ...user._doc,
+      registrationDate: formatDate(user.registrationDate),
+    };
 
-    res.status(200).json(users);
-  } catch (err) {
-    console.error("Error fetching users by event:", err);
-    res
+    return res.json(formattedUser);
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    return res
       .status(500)
-      .json({ error: "Error fetching users", details: err.message });
+      .json({ error: "Internal Server Error", details: error.message });
   }
 };
 // **********
@@ -77,12 +93,19 @@ exports.getUsersByEvent = async (req, res) => {
 // *********
 exports.getAllUsers = async (req, res) => {
   try {
-    const users = await User.find();
+    const { userRole } = req.query;
+
+    let query = {};
+
+    if (userRole) {
+      query.userRole = userRole;
+    }
+    const users = await User.find(query);
     const formattedDate = users.map((user) => ({
       ...user._doc,
       registrationDate: formatDate(user.registrationDate),
     }));
-    
+
     return res.json(formattedDate);
   } catch (error) {
     res.status(500).json({ message: error.message });

@@ -1,4 +1,6 @@
 const Ticket = require("../models/tickets_model");
+const User = require("../models/user_model");
+const Event = require("../models/events_model");
 const ticketValidationSchema = require("../validators/tickets_Validators");
 const formatDate = (date) => {
   const d = new Date(date);
@@ -8,6 +10,7 @@ const formatDate = (date) => {
 
   return `${year}-${month}-${day}`;
 };
+
 // *************
 // Get All Ticket
 // *************
@@ -23,17 +26,24 @@ exports.getAllTickets = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
 // *************
 // Create Ticket
 // *************
 exports.createTicket = async (req, res) => {
-  // TICKET validation
-  const { error } = ticketValidationSchema.validate(req.body);
-  if (error) return res.status(400).json({ error: error.details[0].message });
-
-  const { ticketId, partyName, userName, purchasedDate, price, promoCode } =
-    req.body;
+  const {
+    userId,
+    eventId,
+    ticketId,
+    partyName,
+    userName,
+    purchasedDate,
+    price,
+    promoCode,
+  } = req.body;
   const newTicket = await new Ticket({
+    userId,
+    eventId,
     ticketId,
     partyName,
     userName,
@@ -43,8 +53,16 @@ exports.createTicket = async (req, res) => {
   });
 
   try {
-    const savedTicket = await newTicket.save();
-    res.status(201).json(savedTicket);
+    await newTicket.save();
+    const ticketCount = await Ticket.countDocuments({ userId: userId });
+
+    // Update the user's ticketsPurchased count
+    await User.findOneAndUpdate(
+      { userId: userId },
+      { ticketsPurchased: ticketCount } // Set ticketsPurchased to the current count
+    );
+
+    res.status(201).json(newTicket);
   } catch (err) {
     console.error("Error creating ticket:", err);
     res
@@ -60,10 +78,20 @@ exports.getTicketById = async (req, res) => {
   console.log(ticketId);
   try {
     const ticket = await Ticket.findOne({ ticketId: ticketId });
+
     if (!ticket) {
       return res.status(404).json({ error: "Ticket not found" });
     }
-    res.status(200).json(ticket);
+
+    const event = await Event.findById(ticket.eventId);
+
+    if (!event) {
+      return res.status(404).json({ error: "Event not found" });
+    }
+    res.status(200).json({
+      ...ticket.toObject(),
+      organizerName: event.event_organizer, // Directly using the string field
+    });
   } catch (err) {
     console.error("Error fetching ticket:", err);
     res

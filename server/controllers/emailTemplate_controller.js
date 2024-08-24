@@ -17,10 +17,10 @@ exports.getEmailTemplate = async (req, res) => {
 // Get Email Template by id
 // *********************
 exports.getEmailTemplateById = async (req, res) => {
-  const {emailId} = req.params;
-  console.log(emailId);
+  // const id = req.params;
+  // console.log(id);
   try {
-    const emailTemplate = await Email.findOne({emailId:emailId});
+    const emailTemplate = await Email.findById(req.params.id);
     if (!emailTemplate) {
       return res.status(404).json({ error: 'Email not found' });
     }
@@ -34,9 +34,9 @@ exports.getEmailTemplateById = async (req, res) => {
 // Create Email Template
 // *********************
 exports.createEmail = async (req, res) => {
-  const {emailId, name, subject, body, type } = req.body;
+  const { name, subject, body, type } = req.body;
   const newEmail = await new Email({
-    emailId,
+ 
     name,
     subject,
     body,

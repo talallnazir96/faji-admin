@@ -1,7 +1,7 @@
 const Blog = require("../models/blog_model");
 const upload = require("../uploads");
 const path = require("path");
-
+const logAction = require("../controllers/auditLogs_controller");
 // *******************
 // Get all blogs
 // *******************
@@ -36,9 +36,11 @@ exports.getSingleBlog = async (req, res) => {
 // *******************
 
 exports.createBlog = async (req, res) => {
-  const { title, content,short_desc } = req.body;
+  const { title, content, short_desc } = req.body;
   if (req.file) {
-    imageUrl = `${process.env.SERVER_URL}/Images/${path.basename(req.file.path)}`;
+    imageUrl = `${process.env.SERVER_URL}/Images/${path.basename(
+      req.file.path
+    )}`;
   } else {
     imageUrl = null; // Handle cases where no file is uploaded
   }
@@ -46,10 +48,27 @@ exports.createBlog = async (req, res) => {
     title,
     content,
     short_desc,
-    image:imageUrl,
+    image: imageUrl,
   });
   try {
     const savedBlog = await newBlog.save();
+  
+
+    // Log the action
+    const action = "CREATE_BLOG";
+    const ID = "1"; // Use the ID of the newly created blog
+    const userId = "66bf3e97566fbd02619d7970";
+  
+    const userName = 'admin';
+    const changes = {
+      title: { old: null, new: savedBlog.title },
+      content: { old: null, new: savedBlog.content },
+      short_desc: { old: null, new: savedBlog.short_desc },
+      image: { old: null, new: savedBlog.image }
+    };
+
+    // Log the action
+    await logAction(action, ID, userId, userName, changes);
     res.status(201).json(savedBlog);
   } catch (err) {
     res.status(400).json({ message: err.message });
@@ -63,9 +82,29 @@ exports.createBlog = async (req, res) => {
 exports.updatedBlog = async (req, res) => {
   try {
     const { id } = req.params;
-    const updatedBlog = await Blog.findByIdAndUpdate(id, req.body, {
-      new: true,
-    });
+    const newImage = req.file;
+
+    // Find the blog post
+    const blog = await Blog.findById(id);
+    if (!blog) {
+      return res.status(404).json({ message: "Blog not found" });
+    }
+
+    // Handle image update
+    if (newImage) {
+      const imageUrl = `${process.env.SERVER_URL}/Images/${path.basename(
+        newImage.filename
+      )}`;
+      // Update with new image filename
+      blog.image = imageUrl;
+    }
+
+    // Update the blog post with the new data
+    blog.title = req.body.title || blog.title;
+    blog.content = req.body.content || blog.content;
+    blog.short_desc = req.body.short_desc || blog.short_desc;
+
+    const updatedBlog = await blog.save();
     res.json(updatedBlog);
   } catch (err) {
     res.status(400).json({ message: err.message });

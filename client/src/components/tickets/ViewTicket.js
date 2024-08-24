@@ -103,7 +103,7 @@ const ViewTicket = () => {
                 }}
               >
                 <span style={{ fontWeight: "500" }}>Event Organizer:</span>{" "}
-                Philipes Goldsmith
+                {getTicket.organizerName}
               </Typography>
             </Grid>
           </Grid>

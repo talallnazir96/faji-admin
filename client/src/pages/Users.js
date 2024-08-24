@@ -31,27 +31,9 @@ function Users() {
     if (isMd) return 'h4';
     if (isLg) return 'h4';
     if (isXl) return 'h3';
-    return 'body1'; // Default variant
+    return 'body1'; 
   };
-  useEffect(() => {
-    const fetchAllUsers = async () => {
-      try {
-        const users = await axios.get(`${constant.apiUrl}/users`)
-        console.log(users.data);
-        setUsers(users.data);
-      } catch (error) {
-        setError("Error fetching users");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchAllUsers();
-  }, []);
-  // const [rowData] = useState([
-  //   { id: 1, name: 'Dummy', email: 'abc@gmail.com', user_role: 'Organizer', registeration_date: '2024-07-15', status: 'active', tickets_purchased: '20'},
-  //   { id: 2, name: 'Dummy', email: 'abc@gmail.com', user_role: 'Organizer', registeration_date: '2024-07-15', status: 'active', tickets_purchased: '10'},
-    
-  // ]);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [users,setUsers]= useState([]);
@@ -60,6 +42,26 @@ function Users() {
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
   const [userIdToDelete, setUserIdToDelete] = useState(null);
+  const [userRoleFilter, setUserRoleFilter] = useState("admin");
+  const fetchAllUsers = async (userRole) => {
+    setLoading(true);
+    console.log(userRole);
+    try {
+      const users = await axios.get(`${constant.apiUrl}/users`, {
+        params: { userRole: userRole }, // Send userRole as a query parameter
+      })
+      console.log(users.data);
+      setUsers(users.data);
+    } catch (error) {
+      setError("Error fetching users");
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+   
+    fetchAllUsers(userRoleFilter);
+  }, [userRoleFilter]);
   const [columnDefs] = useState([
     { headerName: 'User ID', field: 'userId', filter: true, floatingFilter: true },
     { headerName: 'User Name', field: 'userName', filter: true, floatingFilter: true },
@@ -163,6 +165,14 @@ const handleDialogConfirm = async(id) => {
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
+    if (newValue === "1") {
+      setUserRoleFilter("admin");
+    } else if (newValue === "2") {
+      setUserRoleFilter("Organizer");
+    } else if (newValue === "3") {
+      setUserRoleFilter("Attendee");
+    }
+    
   };
 
   return (
@@ -177,6 +187,7 @@ const handleDialogConfirm = async(id) => {
         <Grid item xs={12} sm={12} md={12} sx={{marginTop: "4%"}}>
           <Box sx={{ width: '100%', typography: 'body1' }}>
             <TabContext value={value}>
+             
               <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                 <TabList onChange={handleChange} aria-label="lab API tabs example" variant="scrollable" // Ensure tabs are scrollable on smaller screens
             scrollButtons="auto" >

@@ -32,7 +32,7 @@ const reportSchema = new mongoose.Schema({
   },
   action:{
     type:String,
-    action: { type: String, default: "Marked as Spam" }, //Marked as Spam,Request info,Declined
+    required: true,
   },
   requestedDetails:{
     type:String,

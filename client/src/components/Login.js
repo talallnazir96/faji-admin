@@ -21,9 +21,7 @@ const Login = ({ setAuthToken }) => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
   const navigate = useNavigate();
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false);
-  };
+ 
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("submit");
@@ -33,19 +31,22 @@ const Login = ({ setAuthToken }) => {
         password,
       });
       console.log(response);
-      if (response.status === 201) {
+
+      if (response.status === 200 || response.status === 201) {
         const userRole = response.data.userRole;
-        console.log(userRole);
+       
         localStorage.setItem("userId", response.data.userId);
-        const token = 'fake-auth-token'; // Replace with real token from server
-        localStorage.setItem('authToken', token);
-        setAuthToken(token);
-        if (userRole === "admin") {
-          // setSnackbarMessage("Login successful!");
-          // setSnackbarSeverity("success");
-          // setSnackbarOpen(true);
-          navigate("/");
+        setSnackbarOpen(true);
+        setSnackbarMessage("Login successful!");
+        setSnackbarSeverity("success");
+        if (userRole === 'admin') {
+          window.location.href = '/';
         }
+       
+      } else {
+        setSnackbarOpen(true);
+        setSnackbarMessage("Invalid credentials. Please try again");
+        setSnackbarSeverity("error");
       }
     } catch (error) {
       setSnackbarMessage("Invalid credentials");
@@ -53,9 +54,13 @@ const Login = ({ setAuthToken }) => {
       setSnackbarOpen(true);
     }
   };
-  const [showPassword, setShowPassword] = useState(false);
-  const handleTogglePassword = () => {
-    setShowPassword(!showPassword);
+  // const [showPassword, setShowPassword] = useState(false);
+  // const handleTogglePassword = () => {
+  //   setShowPassword(!showPassword);
+  // };
+
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
   };
   return (
     <Box className="loginForm" sx={{ maxWidth: 400, mx: "auto", mt: 8, p: 3 }}>
@@ -77,21 +82,21 @@ const Login = ({ setAuthToken }) => {
           required
           fullWidth
           id="password"
-          type={showPassword ? "text" : "password"}
+          type={"password"}
           label="Password"
           margin="normal"
           variant="outlined"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton onClick={handleTogglePassword} edge="end">
-                  {showPassword ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
+          // InputProps={{
+          //   endAdornment: (
+          //     <InputAdornment position="end">
+          //       <IconButton onClick={handleTogglePassword} edge="end">
+          //         {showPassword ? <VisibilityOff /> : <Visibility />}
+          //       </IconButton>
+          //     </InputAdornment>
+          //   ),
+          // }}
         />
         <Button
           type="submit"
@@ -105,15 +110,10 @@ const Login = ({ setAuthToken }) => {
       </form>
       <Snackbar
         open={snackbarOpen}
-        autoHideDuration={2000}
-        onClose={handleSnackbarClose}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
       >
-        <Alert
-          onClose={handleSnackbarClose}
-          severity={snackbarSeverity}
-          variant="filled"
-          sx={{ width: "100%" }}
-        >
+        <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity}>
           {snackbarMessage}
         </Alert>
       </Snackbar>

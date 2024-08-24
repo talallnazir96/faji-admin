@@ -13,6 +13,21 @@ const formatDate = (date) => {
   return `${year}-${month}-${day}`;
 };
 
+exports.getLastWeekData = async (req, res) => {
+  try {
+    const today = new Date();
+    const lastWeek = new Date(today.setDate(today.getDate() - 7));
+
+    const events = await Event.find({
+     date: { $gte: lastWeek },
+    });
+
+    res.json(events);
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 // Fetch events with optional status filter
 exports.getEvents = async (req, res) => {
   try {
@@ -21,16 +36,15 @@ exports.getEvents = async (req, res) => {
     let query = {}; // Default query to get all events
 
     if (status) {
-      query.status = status; 
+      query.status = status;
     }
 
     const events = await Event.find(query);
     const formattedEventDate = events.map((event) => ({
       ...event._doc,
-      date: formatDate(event.date), 
+      date: formatDate(event.date),
     }));
-    return res.json(formattedEventDate); 
-
+    return res.json(formattedEventDate);
   } catch (error) {
     console.error("Error fetching events:", error);
     res.status(500).json({ message: "Server error" }); // Handle errors
@@ -66,7 +80,6 @@ exports.getEventById = async (req, res) => {
 exports.createEvent = async (req, res) => {
   try {
     const {
-      eventId,
       userId,
       eventTitle,
       date,
@@ -74,7 +87,6 @@ exports.createEvent = async (req, res) => {
       seats,
       location,
       price,
-
       description,
       event_organizer,
       status,
@@ -86,10 +98,9 @@ exports.createEvent = async (req, res) => {
       "File paths:",
       req.files.map((file) => file.path)
     );
- 
+
     const newEvent = new Event({
       userId,
-      eventId,
       eventTitle,
       date,
       time,
@@ -140,6 +151,7 @@ exports.updatedEventStatus = async (req, res) => {
     const { status } = req.body;
     console.log(status);
     const eventId = req.params.id;
+    console.log(eventId);
     const event = await Event.findByIdAndUpdate(
       eventId,
       { status },
@@ -249,17 +261,19 @@ exports.eventsStatus = async (req, res) => {
 // *******************************
 exports.eventsStats = async (req, res) => {
   try {
-    const totalTicketsSold = await User.aggregate([
-      { $group: { _id: null, total: { $sum: "$ticketsPurchased" } } },
+    const totalTicketsSold = await Event.aggregate([
+      { $group: { _id: null, total:{ $sum: '$price' }  } },
     ]);
 
     res.status(200).json({
       totalTicketsSold: totalTicketsSold[0]?.total || 0,
+      totalRevenue: totalTicketsSold[0]?.price || 0
     });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
+
 // ******************
 // get total seats
 // *****************

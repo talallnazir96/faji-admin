@@ -18,8 +18,16 @@ exports.getReports = async (req, res) => {
 // ***************
 
 exports.createReport = async (req, res) => {
-  const { ID, timeStamp, description, userId, username, eventname, eventId } =
-    req.body;
+  const {
+    ID,
+    timeStamp,
+    description,
+    userId,
+    username,
+    eventname,
+    action,
+    eventId,
+  } = req.body;
   const newReport = await new Report({
     ID,
     timeStamp,
@@ -28,6 +36,7 @@ exports.createReport = async (req, res) => {
     username,
     eventname,
     eventId,
+    action,
   });
   try {
     const savedReport = await newReport.save();
@@ -39,15 +48,53 @@ exports.createReport = async (req, res) => {
       .json({ error: "Error creating reports", details: err.message });
   }
 };
+// ********************
+// Update Report Action
+// ********************
+exports.updatedReportActions = async (req, res) => {
+  try {
+    const { id } = req.params;
+    console.log(id);
 
+    const { action, requestedDetails } = req.body;
+    console.log(action);
+
+    const report = await Report.findByIdAndUpdate(
+      id,
+      { action },
+      { new: true }
+    );
+
+    // Validate the action
+    if (action === "req_info") {
+      // Handle the "req_info" action
+      const report = await Report.findByIdAndUpdate(
+        reportId,
+        { action, additionalInfo }, // Save additional info along with the action
+        { new: true }
+      );
+
+      if (!report) {
+        return res.status(404).json({ message: "Report not found" });
+      }
+
+      res.json({ message: "Report action updated", report });
+    } else {
+      // Handle other actions
+    }
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error });
+  }
+};
 // ********************
 // Event Marked as Spam
 // ********************
 exports.spamEvent = async (req, res) => {
   try {
-    const { eventId } = req.params;
+    const { id } = req.params;
+    console.log(id);
     const report = await Report.findByIdAndUpdate(
-      eventId,
+      id,
       { action: "Marked as Spam" },
       { new: true }
     );
@@ -79,7 +126,9 @@ exports.declineEvent = async (req, res) => {
       .json({ error: "Error declining event", details: error.message });
   }
 };
-
+// ********************
+// Request Info
+// ********************
 exports.requestInfo = async (req, res) => {
   try {
     const { id } = req.params;
@@ -88,11 +137,13 @@ exports.requestInfo = async (req, res) => {
 
     const report = await Report.findByIdAndUpdate(
       id,
-      {action:"Request Info"},
-      { requestedDetails:requestedDetails},
+      { action: "request-info", requestedDetails: requestedDetails},
+     
       { new: true }
     );
-    res.status(200).json({ message: "Information requested successfully", report });
+    res
+      .status(200)
+      .json({ message: "Information requested successfully", report });
   } catch (error) {
     res
       .status(500)

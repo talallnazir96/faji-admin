@@ -68,15 +68,14 @@ app.post("/api/app-notifications/send-notification/:id", async (req, res) => {
   console.log(id);
 
   try {
-    const { notification_id, title, date, type, description } = req.body;
+    const { title, date, type, description } = req.body;
     // 1. Log notification received
-    console.log("Notification received:", {
-      notification_id,
-      title,
-      date,
-      type,
-      description,
-    });
+    // console.log("Notification received:", {
+    //   title,
+    //   date,
+    //   type,
+    //   description,
+    // });
 
     // Send notification via socket.io
     io.emit("receiveNotification", { title, description });
@@ -84,8 +83,7 @@ app.post("/api/app-notifications/send-notification/:id", async (req, res) => {
 
     // Save notification to the database
     const notification = new Notification({
-      id: req.params,
-      notification_id,
+   id:req.params.id,
       title,
       date,
       type,
@@ -93,14 +91,11 @@ app.post("/api/app-notifications/send-notification/:id", async (req, res) => {
     });
 
     const savedNotification = await notification.save();
-    // Respond with the saved notification
-    res.status(201).json(savedNotification);
-    console.log("Notification saved to database.");
-
-    //  Send response back to client
     res
       .status(201)
-      .json({ message: "Notification sent and saved successfully" });
+      .json({ message: "Notification sent and saved successfully",
+        notification: savedNotification,
+       });
   } catch (error) {
     console.error("Error sending or saving notification:", error);
     res.status(500).json({
