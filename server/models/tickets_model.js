@@ -27,7 +27,7 @@ const ticketSchema = new mongoose.Schema({
     required: true,
   },
   price: {
-    type: Number, // Price in dollars
+    type: String, // Price in dollars
     required: true,
   },
   promoCode: {

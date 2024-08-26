@@ -1,20 +1,33 @@
 const Logs = require("../models/auditLogs_model");
 const logsValidationSchema = require("../validators/auditLogs_Validators");
 const User = require("../models/auth_model");
+const formatDate = (date) => {
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+  const day = String(d.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+};
+
 exports.getAuditLogs = async (req, res) => {
   try {
-    const logs = await Logs.find().sort({ timeStamp: -1 });
-    res.json(logs);
+    const auditLog = await Logs.find().sort({ timeStamp: -1 });
+    const formattedLogDate = auditLog.map((log) => ({
+      ...log._doc,
+      timeStamp: formatDate(log.timeStamp), // Format as mm/dd/yyyy
+    }));
+    return res.json(formattedLogDate);
+   
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
 exports.createAuditLogs = async (req, res) => {
-  // const { error } = logsValidationSchema.validate(req.body);
-  // if (error) return res.status(400).json({ error: error.details[0].message });
 
   const {action, ID, timeStamp, userId, userName, changes } = req.body;
+ 
   const newLogs = await new Logs({
     action,
     ID,
@@ -34,29 +47,4 @@ exports.createAuditLogs = async (req, res) => {
       .json({ error: "Error creating logs", details: err.message });
   }
 };
-// exports.updateUser = async (req, res) => {
-//   const { userId, changes } = req.body;
 
-//   try {
- 
-//     const updatedUser = await User.findByIdAndUpdate(userId, changes, {
-//       new: true,
-//     });
-
-    
-//     await createAuditLogs({
-//       ID: updatedUser._id,
-//       timeStamp: new Date(),
-//       userId: updatedUser._id,
-//       userName: updatedUser.username,
-//       changes: changes,
-//     });
-
-//     res.status(200).json(updatedUser);
-//   } catch (err) {
-//     console.error("Error updating user:", err);
-//     res
-//       .status(500)
-//       .json({ error: "Error updating user", details: err.message });
-//   }
-// };

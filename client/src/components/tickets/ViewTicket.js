@@ -40,7 +40,7 @@ const ViewTicket = () => {
         setGetTicket(data);
       })
       .catch((error) => {
-        console.error("Error fetching ticket:", error);
+        console.error("Error fetching ticket:", {detail:error.message});
       });
   }, [id]);
   console.log(getTicket);

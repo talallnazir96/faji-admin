@@ -20,9 +20,12 @@ import {
   Snackbar,
   Alert,
 } from "@mui/material";
+import AdminDetails from "../../components/logs/AdminDetails";
+import { AuditLogs } from "../../components/logs/AuditLogs";
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
+
 const status = [
   {
     value: "approved",
@@ -47,6 +50,7 @@ const UpdateEvent = () => {
 
     return `${year}-${month}-${day}`;
   };
+  const { userDetails } = AdminDetails();
   const { id } = useParams();
   console.log(id);
   const navigate = useNavigate();
@@ -91,7 +95,7 @@ const UpdateEvent = () => {
     const payload = {
       eventTitle: formData.eventTitle,
       date: formData.date,
-      event_organizer:formData.event_organizer,
+      event_organizer: formData.event_organizer,
       status: formData.status,
       location: formData.location,
       price: formData.price,
@@ -113,6 +117,17 @@ const UpdateEvent = () => {
         setSnackbarOpen(true);
         setSnackbarMessage("Event updated successfully!");
         setSnackbarSeverity("success");
+        await AuditLogs(
+          1,
+          new Date(),
+          "Update Event",
+          userDetails.userId,
+          userDetails.username,
+          {
+            title: { old: null, new: formData.eventTitle },
+            content: { old: null, new: formData.description },
+          }
+        );
         navigate("/events");
       } else {
         setSnackbarOpen(true);

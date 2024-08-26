@@ -26,7 +26,33 @@ exports.getAllTickets = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+exports.deleteTicket = async (req, res) => {
+  const { ticketId, userId } = req.params;
 
+  try {
+    // Find and delete the ticket
+    const deletedTicket = await Ticket.findByIdAndDelete(ticketId);
+
+    if (!deletedTicket) {
+      return res.status(404).json({ error: "Ticket not found" });
+    }
+
+    // Count the remaining tickets purchased by the user
+    const ticketCount = await Ticket.countDocuments({ userId });
+
+    // Update the user's ticketsPurchased count
+    await User.findOneAndUpdate(
+      { _id: userId },
+      { ticketsPurchased: ticketCount },
+      { new: true, runValidators: true }
+    );
+
+    res.status(200).json({ message: "Ticket deleted successfully", deletedTicket });
+  } catch (err) {
+    console.error("Error deleting ticket:", err);
+    res.status(500).json({ error: "Error deleting ticket", details: err.message });
+  }
+};
 // *************
 // Create Ticket
 // *************
@@ -54,12 +80,14 @@ exports.createTicket = async (req, res) => {
 
   try {
     await newTicket.save();
-    const ticketCount = await Ticket.countDocuments({ userId: userId });
-
+    const ticketCount = await Ticket.countDocuments({ userId });
+    console.log(ticketCount);
+    console.log();
     // Update the user's ticketsPurchased count
     await User.findOneAndUpdate(
-      { userId: userId },
-      { ticketsPurchased: ticketCount } // Set ticketsPurchased to the current count
+      { _id: userId },
+      { ticketsPurchased: ticketCount },
+      { new: true, runValidators: true }
     );
 
     res.status(201).json(newTicket);
@@ -74,10 +102,10 @@ exports.createTicket = async (req, res) => {
 // Get Ticket by id
 // *******************
 exports.getTicketById = async (req, res) => {
-  const { ticketId } = req.params;
-  console.log(ticketId);
+  const { id } = req.params;
+  console.log(id);
   try {
-    const ticket = await Ticket.findOne({ ticketId: ticketId });
+    const ticket = await Ticket.findById(id);
 
     if (!ticket) {
       return res.status(404).json({ error: "Ticket not found" });

@@ -12,14 +12,19 @@ const formatDate = (date) => {
 
   return `${year}-${month}-${day}`;
 };
-
+exports.fetchTotalEvents = async (req, res) => {
+  try {
+    const totalEvents = await Event.countDocuments();
+    res.json({ totalEvents });
+  } catch (error) {}
+};
 exports.getLastWeekData = async (req, res) => {
   try {
     const today = new Date();
     const lastWeek = new Date(today.setDate(today.getDate() - 7));
 
     const events = await Event.find({
-     date: { $gte: lastWeek },
+      date: { $gte: lastWeek },
     });
 
     res.json(events);
@@ -262,12 +267,12 @@ exports.eventsStatus = async (req, res) => {
 exports.eventsStats = async (req, res) => {
   try {
     const totalTicketsSold = await Event.aggregate([
-      { $group: { _id: null, total:{ $sum: '$price' }  } },
+      { $group: { _id: null, total: { $sum: "$price" } } },
     ]);
 
     res.status(200).json({
       totalTicketsSold: totalTicketsSold[0]?.total || 0,
-      totalRevenue: totalTicketsSold[0]?.price || 0
+ 
     });
   } catch (err) {
     res.status(500).json({ message: err.message });

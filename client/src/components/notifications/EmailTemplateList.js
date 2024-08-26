@@ -7,12 +7,15 @@ import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRo
  } from '@mui/material';
 import { Edit as EditIcon, Delete as DeleteIcon, AddCircle as AddCircleIcon } from '@mui/icons-material';
 import SendIcon from '@mui/icons-material/Send';
+import AdminDetails from "../../components/logs/AdminDetails";
+import { AuditLogs } from "../../components/logs/AuditLogs";
 
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
   });
 const EmailTemplateList = () => {
+  const { userDetails } = AdminDetails();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -70,7 +73,17 @@ const handleDialogConfirm = async(id) => {
     if (response.ok) {
       // Successfully deleted
       console.log("Email Template Deleted Successfully");
-
+      await AuditLogs(
+        1,
+        new Date(),
+        "Email Template Deleted",
+        userDetails.userId,
+        userDetails.username,
+        {
+          action: { old: null, new: 'Email Template Deleted'},
+        
+        }
+      );
       setEmailTemplate((prevPosts) => {
         const updatedEmailTemplate = prevPosts.filter(
           (email) => email._id !== emailTemplateToDelete

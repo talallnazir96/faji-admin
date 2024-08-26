@@ -24,6 +24,8 @@ import {
   OutlinedInput,
 } from "@mui/material";
 import axios from "axios";
+import AdminDetails from "../../components/logs/AdminDetails";
+import { AuditLogs } from "../../components/logs/AuditLogs";
 
 import { useParams, useNavigate } from "react-router-dom";
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -38,6 +40,7 @@ const formatDate = (date) => {
   return `${year}-${month}-${day}`;
 };
 const EditPromo = () => {
+  const { userDetails } = AdminDetails();
   const { id } = useParams();
   //   console.log(id);
   const navigate = useNavigate();
@@ -117,6 +120,17 @@ const EditPromo = () => {
         setSnackbarOpen(true);
         setSnackbarMessage("Promocode updated successfully!");
         setSnackbarSeverity("success");
+        await AuditLogs(
+          1,
+          new Date(),
+          "Update Promocode",
+          userDetails.userId,
+          userDetails.username,
+          {
+            title: { old: null, new: formData.code },
+            content: { old: null, new: formData.code },
+          }
+        );
         navigate("/promo");
       } else {
         setSnackbarOpen(true);

@@ -19,8 +19,11 @@ import {
 import constant from "../../constant";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import AdminDetails from "../../components/logs/AdminDetails";
+import { AuditLogs } from "../../components/logs/AuditLogs";
 
 const EditPromo = () => {
+  const { userDetails } = AdminDetails();
   const navigate = useNavigate();
   const [selectedItems, setSelectedItems] = useState([]);
 
@@ -82,6 +85,18 @@ const EditPromo = () => {
           setSnackbarOpen(true);
           setSnackbarMessage("Form submitted successfully!");
           setSnackbarSeverity("success");
+          await AuditLogs(
+            1,
+            new Date(),
+            "Add Promocode",
+            userDetails.userId,
+            userDetails.username,
+            {
+              
+              title: { old: null, new: formData.promocode },
+              content: { old: null, new: formData.promocode},
+            }
+          );
           navigate("/promo");
           console.log("Form data submitted:", formData);
         } else {

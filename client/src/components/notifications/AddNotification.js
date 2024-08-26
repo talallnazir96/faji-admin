@@ -15,6 +15,8 @@ import {
 import axios from "axios";
 import constant from "../../constant";
 import { useNavigate } from "react-router-dom";
+import AdminDetails from "../../components/logs/AdminDetails";
+import { AuditLogs } from "../../components/logs/AuditLogs";
 
 const initialTemplates = [
   {
@@ -58,6 +60,7 @@ const NotificationForm = () => {
 
     return `${year}-${month}-${day}`;
   };
+  const { userDetails } = AdminDetails();
   const { id } = useParams();
   console.log(id);
   const navigate = useNavigate();
@@ -123,6 +126,29 @@ const NotificationForm = () => {
           : "Notification Template created successfully!"
       );
       setSnackbarSeverity("success");
+      await isEditMode?AuditLogs(
+        1,
+        new Date(),
+        "Notification updated",
+        userDetails.userId,
+        userDetails.username,
+        {
+          
+          title: { old: null, new: template.title },
+          content: { old: null, new: template.description },
+        }
+      ): AuditLogs(
+        1,
+        new Date(),
+        "Notification added",
+        userDetails.userId,
+        userDetails.username,
+        {
+          
+          title: { old: null, new: template.title },
+          content: { old: null, new: template.description },
+        }
+      );
       navigate("/app-notifications");
     } catch (error) {
       console.error(

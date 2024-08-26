@@ -60,7 +60,7 @@ function Tickets() {
         <Box>
           <Link
           to={{
-            pathname: `/tickets/view-ticket/${params.data.ticketId}`, // Dynamic route for detail view
+            pathname: `/tickets/view-ticket/${params.data._id}`, // Dynamic route for detail view
             state: { selectedItem: params.data }, // Pass selected item as state
           }}
           style={{ textDecoration: 'none' }}

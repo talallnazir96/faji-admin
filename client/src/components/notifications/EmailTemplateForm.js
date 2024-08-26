@@ -19,6 +19,8 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import constant from "../../constant";
+import AdminDetails from "../../components/logs/AdminDetails";
+import { AuditLogs } from "../../components/logs/AuditLogs";
 const initialTemplates = [
   {
     id: 1,
@@ -52,6 +54,7 @@ const type = [
   },
 ];
 const EmailTemplateForm = () => {
+  const { userDetails } = AdminDetails();
   const { id } = useParams();
   console.log(id);
   const navigate = useNavigate();
@@ -85,23 +88,7 @@ const EmailTemplateForm = () => {
     }
   }, [id]);
   console.log(template);
-  // useEffect(() => {
-  //   if (id) {
-  //     console.log(`Edit mode activated for ID: ${id}`); // Debug log
-  //     const existingTemplate = initialTemplates.find(
-  //       (t) => t.id === parseInt(id, 10)
-  //     );
-  //     if (existingTemplate) {
-  //       setTemplate(existingTemplate);
-  //       setIsEditMode(true);
-  //     } else {
-  //       console.error("Template not found for ID:", id); // Debug log
-  //     }
-  //   } else {
-  //     console.log("Create mode activated"); // Debug log
-  //     setIsEditMode(false);
-  //   }
-  // }, [id]);
+ 
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -134,6 +121,28 @@ const EmailTemplateForm = () => {
           : "Email Template created successfully!"
       );
       setSnackbarSeverity("success");
+      await isEditMode ?  await AuditLogs(
+        1,
+        new Date(),
+        "Edit Email Template",
+        userDetails.userId,
+        userDetails.username,
+        {
+          
+          email: { old: null, new: template.name},
+          subject: { old: null, new: template.subject },
+        }
+      ) : AuditLogs(
+        1,
+        new Date(),
+        "Email Template Added",
+        userDetails.userId,
+        userDetails.username,
+        {
+          email: { old: null, new: template.name},
+          subject: { old: null, new: template.subject },
+        }
+      );
       navigate("/email-templates");
     } catch (error) {
       console.error(

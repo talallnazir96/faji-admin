@@ -18,40 +18,42 @@ import {
 import axios from "axios";
 import constant from "../constant";
 
-const data = [
-  { sales: 50 },
-  { sales: 80 },
-  { sales: 120 },
-  { sales: 20 },
-  { sales: 150 },
-  { sales: 45 },
-  { sales: 87 },
-];
 
 const ChartCard = () => {
-  // const [data, setData] = useState([]);
+  const [data, setData] = useState([]);
+  const daysOfWeek = [];
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const graphSales = [
+    { sales: 50},
+    { sales: 80 },
+    { sales: 120 },
+    { sales: 20 },
+    { sales: 150 },
+    { sales: 45 },
+    { sales: 87 },
+  ];
+  
+  useEffect(() => {
+    axios
+      .get(`${constant.apiUrl}/events/lastWeekEvents`)
+      .then((response) => {
+        console.log(response.data);
 
-  // useEffect(() => {
-  //   // Replace the URL with your actual API endpoint
-  //   axios
-  //     .get(`${constant.apiUrl}/events/lastWeekEvents`)
-  //     .then((response) => {
-  //       console.log(response.data);
-  //       // Assume the API returns an array of objects with `requestDate` and `count` fields
-  //       const formattedData = response.data.map((item) => ({
-  //         day: new Date(item.date), // Convert date to weekday
-  //         sales: item.count,// or however your API returns the count of requests
-  //       }));
-  //       setData(formattedData);
-  //       setLoading(false);
-  //     })
-  //     .catch((error) => {
-  //       setError("Error fetching data");
-  //       setLoading(false);
-  //     });
-  // }, []);
+        const formattedData = response.data.map((item,index) => ({
+          day: new Date(item.date).toLocaleDateString("en-US", {
+            weekday: "short",
+          }),
+          sales: graphSales[index]?.sales || 0, 
+        }));
+        setData(formattedData);
+        setLoading(false);
+      })
+      .catch((error) => {
+        setError("Error fetching data");
+        setLoading(false);
+      });
+  }, []);
   return (
     <Card sx={{ Width: "100%", fontFamily: "Montserrat, sans-serif" }}>
       <CardContent>
@@ -70,7 +72,7 @@ const ChartCard = () => {
               <Tooltip />
               <Line
                 type="monotone"
-                dataKey="sales"
+                dataKey='sales'
                 stroke="#FD99C9"
                 activeDot={{ r: 8 }}
               />

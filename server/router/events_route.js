@@ -6,7 +6,7 @@ router.route("/lastWeekEvents").get(eventsController.getLastWeekData);
 router.route("/").get(eventsController.getEvents);
 
 router.route("/total-seats").get(eventsController.totalSeats);
-
+router.route("/totalEvents").get(eventsController.fetchTotalEvents);
 router.route("/stats").get(eventsController.eventsStats);
 
 router.route("/:id").get(eventsController.getEventById);

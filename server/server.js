@@ -17,6 +17,7 @@ const emailsRoutes = require("./router/emailTemplate_route");
 const notificationsRoutes = require("./router/notification_route");
 const errorMiddleware = require("./middlewares/error-middleware");
 const Notification = require("./models/sendNotification_model");
+const dashboardRoutes = require("./router/dashboard_route");
 const socketIo = require("socket.io");
 const http = require("http");
 const cors = require("cors");
@@ -52,6 +53,8 @@ app.use("/api/reports", reportsRoutes);
 app.use("/api/email-templates", emailsRoutes);
 
 app.use("/api/app-notifications", notificationsRoutes);
+
+app.use("/api/", dashboardRoutes);
 
 app.use(express.static('public'));
 

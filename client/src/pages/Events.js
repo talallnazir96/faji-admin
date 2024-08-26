@@ -27,11 +27,14 @@ import EditIcon from "@mui/icons-material/Edit";
 import { Link } from "react-router-dom";
 import constant from "../constant";
 import axios from "axios";
+import AdminDetails from "../components/logs/AdminDetails";
+import { AuditLogs } from "../components/logs/AuditLogs";
 import { useMediaQuery, useTheme } from "@mui/material";
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 function Events() {
+  const { userDetails } = AdminDetails();
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -70,13 +73,13 @@ function Events() {
     } catch (err) {
       setError(err.message);
     } finally {
-      setLoading(false); // Stop the loading spinner
+      setLoading(false); 
     }
   };
   useEffect(() => {
-    fetchEvents(statusFilter); // Fetch events with the default status filter
+    fetchEvents(statusFilter); 
   }, [statusFilter]);
-  console.log(events);
+  // console.log(events.description);
 
   const handleStatusChange = async (event, eventId) => {
     const newStatus = event.target.value;
@@ -117,7 +120,6 @@ function Events() {
   };
 
   const [columnDefs] = useState([
-  
     {
       headerName: "Title",
       field: "eventTitle",
@@ -245,7 +247,17 @@ function Events() {
       if (response.ok) {
         // Successfully deleted
         console.log("Event Deleted Successfully");
-
+        await AuditLogs(
+          1,
+          new Date(),
+          "Delete Event",
+          userDetails.userId,
+          userDetails.username,
+          {
+            title: { old: null, new: 'delete event' },
+            content: { old: null, new: 'delete event' },
+          }
+        );
         setEvents((prevPosts) => {
           const updatedEvents = prevPosts.filter(
             (event) => event._id !== eventIdToDelete

@@ -7,11 +7,15 @@ const logAction = require("../controllers/auditLogs_controller");
 // *******************
 
 exports.getAllBlogs = async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 6;
+  const skip = (page - 1) * limit;
   try {
-    const blogs = await Blog.find();
-    res.json(blogs);
+    const blogs = await Blog.find().skip(skip).limit(limit);
+    const totalBlogs = await Blog.countDocuments();
+    res.json({ blogs, totalBlogs });
   } catch (error) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -52,23 +56,7 @@ exports.createBlog = async (req, res) => {
   });
   try {
     const savedBlog = await newBlog.save();
-  
-
-    // Log the action
-    const action = "CREATE_BLOG";
-    const ID = "1"; // Use the ID of the newly created blog
-    const userId = "66bf3e97566fbd02619d7970";
-  
-    const userName = 'admin';
-    const changes = {
-      title: { old: null, new: savedBlog.title },
-      content: { old: null, new: savedBlog.content },
-      short_desc: { old: null, new: savedBlog.short_desc },
-      image: { old: null, new: savedBlog.image }
-    };
-
-    // Log the action
-    await logAction(action, ID, userId, userName, changes);
+   
     res.status(201).json(savedBlog);
   } catch (err) {
     res.status(400).json({ message: err.message });

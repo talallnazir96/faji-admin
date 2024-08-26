@@ -6,6 +6,8 @@ import axios from 'axios';
 import constant from '../../constant';
 import {useNavigate} from 'react-router-dom';
 import {  useMediaQuery, useTheme } from '@mui/material';
+import AdminDetails from "../../components/logs/AdminDetails";
+import { AuditLogs } from "../../components/logs/AuditLogs";
 
 const role = [
     {
@@ -32,6 +34,7 @@ const status = [
     }
   ];
 const AddUser = () => {
+  const { userDetails } = AdminDetails();
     const navigate = useNavigate();
     const theme = useTheme();
   const isXs = useMediaQuery(theme.breakpoints.only('xs'));
@@ -94,6 +97,18 @@ const AddUser = () => {
               setSnackbarOpen(true);
               setSnackbarMessage("Form submitted successfully!");
               setSnackbarSeverity("success");
+              await AuditLogs(
+                1,
+                new Date(),
+                "Add User",
+                userDetails.userId,
+                userDetails.username,
+                {
+                  
+                  username: { old: null, new: formData.userName },
+                  email: { old: null, new: formData.email },
+                }
+              );
               navigate("/users");
               console.log("Form data submitted:", formData);
             } else {

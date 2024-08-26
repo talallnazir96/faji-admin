@@ -11,15 +11,17 @@ exports.getUserById = async (req, res) => {
   console.log(id);
 
   try {
-    // Fetch user details from the database
-    const user = await User.findById(id).select("username email role"); // Adjust fields as needed
+    
+    const user = await User.findById(id).select("username email role _id userId"); 
 
     if (user) {
       res.json({
         username: user.username,
         email: user.email,
         role: user.role,
-        // Include any other details you need
+        userId: user.userId,
+        _id:user._id
+        
       });
     } else {
       res.status(404).json({ message: "User not found" });

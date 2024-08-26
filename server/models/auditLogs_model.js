@@ -13,13 +13,12 @@ const auditLogSchema = new mongoose.Schema({
   },
   timeStamp: { type: Date, default: Date.now },
   userId: {
-    type: Schema.Types.ObjectId,
-    ref: "User", // Reference to the User model
+    type: Number,
+
     required: true,
   },
   userName: {
     type: String,
-    ref: "User",
     required: true,
   },
   changes: {

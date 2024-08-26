@@ -31,6 +31,8 @@ import {
 import SendIcon from "@mui/icons-material/Send";
 import constant from "../../constant";
 import axios from "axios";
+import AdminDetails from "../../components/logs/AdminDetails";
+import { AuditLogs } from "../../components/logs/AuditLogs";
 const emailTemplates = [
   {
     id: 1,
@@ -54,6 +56,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 const PushNotificationList = () => {
+  const { userDetails } = AdminDetails();
   const navigate = useNavigate();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -86,7 +89,7 @@ const PushNotificationList = () => {
   };
 
   const handleSend = async (id) => {
-    const notification = notifications.find(n => n._id === id);
+    const notification = notifications.find((n) => n._id === id);
 
     const payload = {
       title: notification.title,
@@ -94,7 +97,7 @@ const PushNotificationList = () => {
       type: notification.type,
       description: notification.description,
     };
-    console.log('submitting payload',payload);
+    console.log("submitting payload", payload);
     if (!payload.title || !payload.description || !payload.type) {
       console.error("Missing required fields in payload:", payload);
       setSnackbarOpen(true);
@@ -114,6 +117,18 @@ const PushNotificationList = () => {
       );
       if (response.status === 200 || response.status === 201) {
         console.log("Notification sent successfully:", response.data);
+        await AuditLogs(
+          1,
+          new Date(),
+          "Notification sent ",
+          userDetails.userId,
+          userDetails.username,
+          {
+            
+            title: { old: null, new: notification.title},
+            content: { old: null, new: notification.description },
+          }
+        );
         setSnackbarOpen(true);
         setSnackbarMessage("Notification sent Successfully!");
         setSnackbarSeverity("success");
@@ -158,7 +173,16 @@ const PushNotificationList = () => {
       );
       if (response.ok) {
         console.log("Notification successfully deleted");
-
+        await AuditLogs(
+          1,
+          new Date(),
+          "Notification Deleted",
+          userDetails.userId,
+          userDetails.username,
+          {
+            action: { old: null, new: "Notification Deleted" },
+          }
+        );
         setNotifications((prevPosts) => {
           const updatedNotifications = prevPosts.filter(
             (notification) => notification._id !== notificationIdToDelete
@@ -229,7 +253,7 @@ const PushNotificationList = () => {
               </TableHead>
               <TableBody>
                 {notifications.map((notification) => (
-                  <TableRow >
+                  <TableRow>
                     <TableCell>{notification.title}</TableCell>
                     <TableCell>{notification.date}</TableCell>
                     <TableCell>{notification.description}</TableCell>

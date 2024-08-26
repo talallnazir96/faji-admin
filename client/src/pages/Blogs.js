@@ -24,15 +24,21 @@ import Image from "../assets/event.jpg";
 import { useNavigate } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useMediaQuery, useTheme } from "@mui/material";
-import { getBlogs } from "../services/blogService";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
+import axios from "axios";
+import AdminDetails from "../components/logs/AdminDetails";
+import { AuditLogs } from "../components/logs/AuditLogs";
+import constant from "../constant";
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 const Blogs = () => {
+  const { userDetails } = AdminDetails();
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
   const theme = useTheme();
   const isXs = useMediaQuery(theme.breakpoints.only("xs"));
   const isSm = useMediaQuery(theme.breakpoints.only("sm"));
@@ -42,9 +48,14 @@ const Blogs = () => {
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const blogs = await getBlogs();
+        const response = await axios.get(`${constant.apiUrl}/blogs/`, {
+          params: { page, limit: 6 },
+        });
         // console.log(blogs);
-        setBlogs(blogs);
+        setBlogs(response.data.blogs);
+        setHasMore(
+          response.data.blogs.length > 0 && response.data.blogs.length === 6
+        );
       } catch (error) {
         setError("Error fetching blogs");
       } finally {
@@ -53,8 +64,11 @@ const Blogs = () => {
     };
 
     fetchBlogs();
-  }, []);
+  }, [page]);
   console.log(blogs);
+  const loadMore = () => {
+    setPage((prevPage) => prevPage + 1);
+  };
   const getVariant = () => {
     if (isXs) return "h5";
     if (isSm) return "h5";
@@ -72,50 +86,63 @@ const Blogs = () => {
   const handleCreate = () => {
     navigate("/blogs/blog-form/create");
   };
- 
-  const handleDelete = async(postId) => {
+
+  const handleDelete = async (postId) => {
     setPostIdToDelete(postId);
     setDialogOpen(true);
-   
-   
   };
 
   const handleDialogClose = () => {
     setDialogOpen(false);
     setPostIdToDelete(null);
   };
-  const handleDialogConfirm = async() => {
+  const handleDialogConfirm = async () => {
     if (postIdToDelete === null) return;
- 
+
     try {
-      const response = await fetch(`http://localhost:5000/api/blogs/${postIdToDelete}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-  
+      const response = await fetch(
+        `http://localhost:5000/api/blogs/${postIdToDelete}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
       if (response.ok) {
-        // Successfully deleted
-        console.log('Post deleted successfully');
-        // Log current state before update
-        console.log('Current posts:', blogs);
-        // Update the state to remove the deleted post
+   
+        console.log("Post deleted successfully");
+       
+        await AuditLogs(
+          1,
+          new Date(),
+          "Delete Blog",
+          userDetails.userId,
+          userDetails.username,
+          {
+            
+            action: { old: null, new: 'Blog Deleted' },
+            
+          }
+        );
+       
         setBlogs((prevPosts) => {
-          const updatedPosts = prevPosts.filter((post) => post._id !== postIdToDelete);
-          console.log('Updated posts:', updatedPosts); // Log the updated state
+          const updatedPosts = prevPosts.filter(
+            (post) => post._id !== postIdToDelete
+          );
+          console.log("Updated posts:", updatedPosts); // Log the updated state
           return updatedPosts;
         });
       } else {
         console.error(`Failed to delete post: ${response.statusText}`);
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error:", error);
     } finally {
       setDialogOpen(false); // Close the dialog after handling
-      setPostIdToDelete(null);// Clear the post ID
+      setPostIdToDelete(null); // Clear the post ID
     }
-    
   };
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
@@ -167,16 +194,18 @@ const Blogs = () => {
           >
             Add New
           </Button>
+
           <Button
             size="small"
-            // onClick={() => handleEdit(1)}
             sx={{ fontSize: "10px" }}
             variant="outlined"
             color="customColor"
+            onClick={loadMore} // Ensure you have a handler for this
           >
-            <HourglassEmptyIcon sx={{ fontSize: "14px", marginRight: "5px" }} />{" "}
+            <HourglassEmptyIcon sx={{ fontSize: "14px", marginRight: "5px" }} />
             Load More
           </Button>
+
           {/* <Button  variant="outlined" color='customColor' sx={{fontSize:"8px",paddingLeft:"40px"}}    startIcon={<HourglassEmptyIcon  size="small"/>}  >LoadMore</Button> */}
         </Grid>
         {/* <Grid item xs={4} sm={4} md={2} align="right">
@@ -185,53 +214,49 @@ const Blogs = () => {
       </Grid>
       <Grid container spacing={1}>
         {blogs.map((blog) => {
-              // console.log(blog);
-            return(
-                <Grid item xs={12} sm={6} md={4} key={blog._id}>
-                <Card sx={{ maxWidth: "100%" }}>
-                  <CardMedia
-                    component="img"
-                    alt="green iguana"
-                    height="140"
-                    image={blog.image}
-                  />
-                  <CardContent>
-                    <Typography gutterBottom variant="h5" component="div">
-                      {blog.title}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {blog.content}
-                    </Typography>
-                  </CardContent>
-                  <CardActions>
-                    <Button
-                      size="small"
-                      onClick={() => handleDelete(blog._id)}
-                      variant="outlined"
-                      color="customColor"
-                    >
-                      <DeleteIcon sx={{ fontSize: "14px", marginRight: "10px" }} />{" "}
-                      Delete
-                    </Button>
-                    <Link to={`/blogs/blog-form/edit/${blog._id}`}><Button
-                      size="small"
-                     
-                      variant="outlined"
-                      color="customColor"
-                    >
-                      
-                      <EditIcon sx={{ fontSize: "14px", marginRight: "10px" }} />{" "}
+          // console.log(blog);
+          return (
+            <Grid item xs={12} sm={6} md={4} key={blog._id}>
+              <Card sx={{ maxWidth: "100%"}}>
+                <CardMedia
+                  component="img"
+                  alt="green iguana"
+                  height="140"
+                  image={blog.image}
+                />
+                <CardContent>
+                  <Typography gutterBottom variant="h5" component="div">
+                    {blog.title}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {blog.content}
+                  </Typography>
+                </CardContent>
+                <CardActions sx={{justifyContent:"center" }}>
+                  <Button
+                    size="small"
+                    onClick={() => handleDelete(blog._id)}
+                    variant="outlined"
+                    color="customColor"
+                  >
+                    <DeleteIcon
+                      sx={{ fontSize: "14px", marginRight: "10px" }}
+                    />{" "}
+                    Delete
+                  </Button>
+                  <Link to={`/blogs/blog-form/edit/${blog._id}`}>
+                    <Button size="small" variant="outlined" color="customColor">
+                      <EditIcon
+                        sx={{ fontSize: "14px", marginRight: "10px" }}
+                      />{" "}
                       Edit
                     </Button>
-                    </Link>
-                  </CardActions>
-                </Card>
-              </Grid>
-            )
-        
-         
+                  </Link>
+                </CardActions>
+              </Card>
+            </Grid>
+          );
         })}
-      
       </Grid>
       <Dialog
         open={dialogOpen}

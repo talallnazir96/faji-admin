@@ -23,11 +23,15 @@ import AddCircleIcon from "@mui/icons-material/AddCircle";
 import EditIcon from "@mui/icons-material/Edit";
 import { Link } from "react-router-dom";
 import { useMediaQuery, useTheme } from "@mui/material";
-import { getAllPromocodes } from "../services/promocodeService";
+import constant from '../constant';
+import AdminDetails from "../components/logs/AdminDetails";
+import { AuditLogs } from "../components/logs/AuditLogs";
+import axios from 'axios';
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 function PromoCode() {
+  const { userDetails } = AdminDetails();
   const theme = useTheme();
   const isXs = useMediaQuery(theme.breakpoints.only("xs"));
   const isSm = useMediaQuery(theme.breakpoints.only("sm"));
@@ -37,9 +41,12 @@ function PromoCode() {
   useEffect(() => {
     const fetchPromocode = async () => {
       try {
-        const promocodes = await getAllPromocodes();
-        console.log(promocodes);
-        setPromocode(promocodes);
+        const promocodes = await axios.get(`${constant.apiUrl}/promo`);
+        if (Array.isArray(promocodes.data)) {
+          setPromocode(promocodes.data);
+        } else {
+          console.error("API response is not an array:", promocodes.data);
+        }
       } catch (error) {
         setError("Error fetching blogs");
       } finally {
@@ -146,9 +153,19 @@ function PromoCode() {
       });
   
       if (response.ok) {
-        // Successfully deleted
+        
         console.log('Promo deleted successfully');
-        // Log current state before update
+        await AuditLogs(
+          1,
+          new Date(),
+          "Delete Promocode",
+          userDetails.userId,
+          userDetails.username,
+          {
+            title: { old: null, new: promocode.code },
+            content: { old: null, new: promocode.code },
+          }
+        );
         console.log('Current promocodes:', promocode);
         // Update the state to remove the deleted post
         setPromocode((prevPosts) => {

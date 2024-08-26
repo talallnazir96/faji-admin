@@ -19,6 +19,8 @@ import { useMediaQuery, useTheme } from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from 'axios';
 import constant from '../../constant';
+import AdminDetails from "../../components/logs/AdminDetails";
+import { AuditLogs } from "../../components/logs/AuditLogs";
 
 const role = [
   {
@@ -54,6 +56,7 @@ const AddUser = () => {
 
   return `${year}-${month}-${day}`;
 };
+const { userDetails } = AdminDetails();
   const { id } = useParams();
   const theme = useTheme();
   const isXs = useMediaQuery(theme.breakpoints.only("xs"));
@@ -129,6 +132,18 @@ const navigate = useNavigate();
           setSnackbarOpen(true);
           setSnackbarMessage("User updated successfully!");
           setSnackbarSeverity("success");
+          await AuditLogs(
+            1,
+            new Date(),
+            "Edit User",
+            userDetails.userId,
+            userDetails.username,
+            {
+              
+              username: { old: null, new: formData.userName },
+              email: { old: null, new: formData.email },
+            }
+          );
           navigate("/users");
         } else {
           setSnackbarOpen(true);

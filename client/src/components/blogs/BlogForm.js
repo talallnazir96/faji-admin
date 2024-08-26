@@ -16,9 +16,13 @@ import constant from "../../constant";
 import { AddAPhoto, Delete } from "@mui/icons-material";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import AdminDetails from "../../components/logs/AdminDetails";
+import { AuditLogs } from "../../components/logs/AuditLogs";
 const BlogForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { userDetails } = AdminDetails();
+  console.log(userDetails.userId);
   const [template, setTemplate] = useState({
     title: "",
     content: " ",
@@ -39,7 +43,6 @@ const BlogForm = () => {
       setPreviewImage(URL.createObjectURL(file));
     }
   };
-
   const handleDeleteImage = () => {
     setImage(null);
     setPreviewImage("");
@@ -62,7 +65,7 @@ const BlogForm = () => {
       setIsEditMode(false);
     }
   }, [id]);
-  
+
   const handleChange = (event) => {
     const { name, value } = event.target;
     setTemplate((prevTemplate) => ({
@@ -72,6 +75,7 @@ const BlogForm = () => {
   };
 
   const handleSubmit = async (event) => {
+    
     event.preventDefault();
     const formData = new FormData();
     formData.append("title", template.title);
@@ -81,10 +85,12 @@ const BlogForm = () => {
       formData.append("image", image);
     }
     console.log("Submitting payload:", formData);
+    const userId = userDetails.userId;
+    const userName = userDetails.username;
     try {
       const url = isEditMode
         ? `${constant.apiUrl}/blogs/${id}`
-        : `${constant.apiUrl}/blogs/`; 
+        : `${constant.apiUrl}/blogs/`;
       console.log(id);
       const method = isEditMode ? "put" : "post";
 
@@ -92,7 +98,7 @@ const BlogForm = () => {
         method,
         url,
         headers: {
-          "Content-Type": "multipart/form-data", 
+          "Content-Type": "multipart/form-data",
         },
         data: formData,
       });
@@ -107,6 +113,27 @@ const BlogForm = () => {
             : "Post Created successfully!"
         );
         setSnackbarSeverity("success");
+        await isEditMode?AuditLogs(
+          1,
+          new Date(),
+          "Edit Blog",
+          userId,
+          userName,
+          {
+            title: { old: null, new: template.title },
+            content: { old: null, new: template.content },
+          }
+        ): AuditLogs(
+          1,
+          new Date(),
+          "Create Blog",
+          userId,
+          userName,
+          {
+            title: { old: null, new: template.title },
+            content: { old: null, new: template.content },
+          }
+        );
         navigate("/blogs");
       } else {
         setSnackbarOpen(true);

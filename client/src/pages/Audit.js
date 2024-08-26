@@ -47,6 +47,14 @@ const auditLogs = [
 ];
 
 const Audit = () => {
+  const formatDate = (date) => {
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+    const day = String(d.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  };
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -60,8 +68,9 @@ const Audit = () => {
     const fetchLogs = async () => {
       try {
         const response = await fetch(`${constant.apiUrl}/audits/audit-logs`);
-        if (!response.ok) throw new Error("Failed to fetch logs");
         const data = await response.json();
+        console.log(data);
+        // data.timeStamp = formatDate(data.timeStamp);
         setLogs(data);
       } catch (error) {
         setError(error.message);
@@ -82,22 +91,22 @@ const Audit = () => {
     return "body1"; // Default variant
   };
   const columnDefs = [
-    { headerName: "ID", field: "id", filter: true, floatingFilter: true },
+    { headerName: "ID", field: "ID", filter: true, floatingFilter: true },
     {
       headerName: "Timestamp",
-      field: "timestamp",
+      field: "timeStamp",
       filter: true,
       floatingFilter: true,
     },
     {
       headerName: "User ID",
-      field: "user.id",
+      field: "userId",
       filter: true,
       floatingFilter: true,
     },
     {
       headerName: "Username",
-      field: "user.username",
+      field: "userName",
       filter: true,
       floatingFilter: true,
     },

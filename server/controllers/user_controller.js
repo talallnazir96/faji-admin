@@ -15,7 +15,7 @@ const formatDate = (date) => {
 // *********
 exports.addUser = async (req, res) => {
   const {
-    userId,
+    ID,
     userName,
     email,
     password,
@@ -27,7 +27,7 @@ exports.addUser = async (req, res) => {
   try {
     
     const newUser = new User({
-      userId,
+      ID,
       userName,
       email,
       password,
