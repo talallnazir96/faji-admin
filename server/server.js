@@ -32,7 +32,7 @@ app.use(express.json());
 app.use(errorMiddleware);
 app.use(bodyParser.json());
 //Routes
-app.use('/api',adminRoutes);
+app.use("/api", adminRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/blogs", blogRoutes);
 
@@ -56,7 +56,14 @@ app.use("/api/app-notifications", notificationsRoutes);
 
 app.use("/api/", dashboardRoutes);
 
-app.use(express.static('public'));
+app.use(express.static("public"));
+
+app.use(express.static(path.join(__dirname, "client/build")));
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
+});
+
 
 // Handle client connection
 io.on("connection", (socket) => {
@@ -68,17 +75,10 @@ io.on("connection", (socket) => {
 });
 app.post("/api/app-notifications/send-notification/:id", async (req, res) => {
   const { id } = req.params;
-  console.log(id);
+
 
   try {
     const { title, date, type, description } = req.body;
-    // 1. Log notification received
-    // console.log("Notification received:", {
-    //   title,
-    //   date,
-    //   type,
-    //   description,
-    // });
 
     // Send notification via socket.io
     io.emit("receiveNotification", { title, description });
@@ -86,7 +86,7 @@ app.post("/api/app-notifications/send-notification/:id", async (req, res) => {
 
     // Save notification to the database
     const notification = new Notification({
-   id:req.params.id,
+      id: req.params.id,
       title,
       date,
       type,
@@ -96,9 +96,10 @@ app.post("/api/app-notifications/send-notification/:id", async (req, res) => {
     const savedNotification = await notification.save();
     res
       .status(201)
-      .json({ message: "Notification sent and saved successfully",
+      .json({
+        message: "Notification sent and saved successfully",
         notification: savedNotification,
-       });
+      });
   } catch (error) {
     console.error("Error sending or saving notification:", error);
     res.status(500).json({

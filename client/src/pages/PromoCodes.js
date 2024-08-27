@@ -145,7 +145,7 @@ function PromoCode() {
     if (promoIdToDelete === null) return;
  
     try {
-      const response = await fetch(`http://localhost:5000/api/promo/${promoIdToDelete}`, {
+      const response = await fetch(`${constant.apiUrl}/promo/${promoIdToDelete}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

@@ -52,7 +52,6 @@ const UpdateEvent = () => {
   };
   const { userDetails } = AdminDetails();
   const { id } = useParams();
-  console.log(id);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     eventTitle: "",
@@ -76,7 +75,7 @@ const UpdateEvent = () => {
         console.error("Error fetching post data:", error);
       });
   }, [id]);
-  console.log(formData);
+
   const [dialogOpen, setDialogOpen] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -111,8 +110,8 @@ const UpdateEvent = () => {
           },
         }
       );
-      console.log("Event updated successfully:", response.data);
-      console.log(response.data);
+      // console.log("Event updated successfully:", response.data);
+    
       if (response.status === 200 || response.status === 201) {
         setSnackbarOpen(true);
         setSnackbarMessage("Event updated successfully!");
@@ -150,7 +149,7 @@ const UpdateEvent = () => {
     setSnackbarSeverity("success");
     setDialogOpen(false);
     setSnackbarOpen(true);
-    // Handle form submission logic (e.g., send data to the server)
+ 
   };
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);

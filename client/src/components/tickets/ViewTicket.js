@@ -26,7 +26,6 @@ const ViewTicket = () => {
   const [getTicket, setGetTicket] = useState([]);
   const navigate = useNavigate();
   const { id } = useParams();
-  console.log(id);
   const handleGoBack = () => {
     navigate(-1);
   };
@@ -36,14 +35,13 @@ const ViewTicket = () => {
       .then((response) => {
         const data = response.data;
         data.purchasedDate = formatDate(data.purchasedDate);
-        console.log(data);
         setGetTicket(data);
       })
       .catch((error) => {
         console.error("Error fetching ticket:", {detail:error.message});
       });
   }, [id]);
-  console.log(getTicket);
+ 
   return (
     <>
       <Grid container sx={{ marginTop: "8%", marginBottom: "2%" }} spacing={2}>

@@ -21,20 +21,7 @@ import axios from "axios";
 import constant from "../../constant";
 import AdminDetails from "../../components/logs/AdminDetails";
 import { AuditLogs } from "../../components/logs/AuditLogs";
-const initialTemplates = [
-  {
-    id: 1,
-    name: "Welcome Email",
-    subject: "Welcome to Our Service",
-    body: "Hello, welcome to our service!",
-  },
-  {
-    id: 2,
-    name: "Reset Password",
-    subject: "Reset Your Password",
-    body: "Click here to reset your password.",
-  },
-];
+
 const type = [
   {
     value: "approval_decline",
@@ -87,7 +74,7 @@ const EmailTemplateForm = () => {
       setIsEditMode(false);
     }
   }, [id]);
-  console.log(template);
+
  
 
   const handleChange = (event) => {

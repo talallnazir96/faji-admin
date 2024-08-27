@@ -22,7 +22,7 @@ const BlogForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { userDetails } = AdminDetails();
-  console.log(userDetails.userId);
+ 
   const [template, setTemplate] = useState({
     title: "",
     content: " ",
@@ -49,7 +49,7 @@ const BlogForm = () => {
   };
   useEffect(() => {
     if (id) {
-      console.log(id);
+   
       axios
         .get(`${constant.apiUrl}/blogs/${id}`)
         .then((response) => {
@@ -91,7 +91,7 @@ const BlogForm = () => {
       const url = isEditMode
         ? `${constant.apiUrl}/blogs/${id}`
         : `${constant.apiUrl}/blogs/`;
-      console.log(id);
+      
       const method = isEditMode ? "put" : "post";
 
       const response = await axios({
@@ -103,7 +103,7 @@ const BlogForm = () => {
         data: formData,
       });
 
-      console.log("Response:", response.data);
+      // console.log("Response:", response.data);
 
       if (response.status === 200 || response.status === 201) {
         setSnackbarOpen(true);

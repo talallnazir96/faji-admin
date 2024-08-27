@@ -40,7 +40,7 @@ useEffect(() => {
   fetchEmailTemplates();
 }, []);
   const handleEdit = (id) => {
-    console.log(id);
+
     navigate(`/email-templates/edit/${id}`);
   };
 

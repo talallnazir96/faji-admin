@@ -61,7 +61,7 @@ const ViewEvent = () => {
 
     fetchTicketSold();
   }, []);
-  console.log(ticketSold);
+
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -82,7 +82,7 @@ const ViewEvent = () => {
 
     fetchUsers();
   }, [id]);
-  console.log([user]);
+
   useEffect(() => {
     axios
       .get(`${constant.apiUrl}/events/${id}`)
@@ -95,7 +95,7 @@ const ViewEvent = () => {
         console.error("Error fetching event:", error);
       });
   }, [id]);
-console.log(viewEvent);
+
   const [columnDefs] = useState([
     {
       headerName: "User ID",
@@ -136,7 +136,7 @@ console.log(viewEvent);
     },
   ]);
   const navigate = useNavigate();
-  // const { id } = useParams();
+
   const handleGoBack = () => {
     navigate(-1);
   };
@@ -155,11 +155,7 @@ console.log(viewEvent);
           >
             Event Details
           </Typography>
-          {/* { viewEvent.map(()=>{
-            return(
-
-            )
-           })} */}
+       
           <Grid container sx={{ marginTop: "4%" }}>
             <Grid item xs={12} sm={6} md={6}>
               <Typography

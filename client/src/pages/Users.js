@@ -59,12 +59,12 @@ function Users() {
   const [userRoleFilter, setUserRoleFilter] = useState("admin");
   const fetchAllUsers = async (userRole) => {
     setLoading(true);
-    console.log(userRole);
+
     try {
       const users = await axios.get(`${constant.apiUrl}/users`, {
         params: { userRole: userRole }, // Send userRole as a query parameter
       });
-      console.log(users.data);
+
       setUsers(users.data);
     } catch (error) {
       setError("Error fetching users");

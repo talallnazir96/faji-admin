@@ -29,7 +29,7 @@ const AdminDetails = () => {
 
     fetchAdminData();
   }, []);
-  console.log(userDetails);
+
   return { userDetails, error };
 };
 

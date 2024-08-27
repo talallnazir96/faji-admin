@@ -53,7 +53,6 @@ const Reports = () => {
     const fetchReports = async () => {
       try {
         const reports = await axios.get(`${constant.apiUrl}/reports/`);
-        console.log(reports.data);
         setReports(reports.data);
       } catch (error) {
         setError("Error fetching reports");

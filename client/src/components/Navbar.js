@@ -61,7 +61,7 @@ function Navbar() {
     if (isMd) return "h4";
     if (isLg) return "h4";
     if (isXl) return "h3";
-    return "body1"; // Default variant
+    return "body1"; 
   };
   return (
     <>
@@ -107,8 +107,8 @@ function Navbar() {
               InputProps={{
                 sx: {
                   "&::placeholder": {
-                    fontSize: { xs: "12px", sm: "14px", md: "16px" }, // Adjust the size as needed
-                    fontFamily: "Montserrat, sans-serif", // Optionally set the font family
+                    fontSize: { xs: "12px", sm: "14px", md: "16px" }, 
+                    fontFamily: "Montserrat, sans-serif", 
                   },
                 },
                 startAdornment: (
@@ -123,8 +123,8 @@ function Navbar() {
           </Search>
           <Avatar
             alt="Admin"
-            src={adminPic} // Provide the image URL if available
-            sx={{ width: 30, height: 30,marginRight:0.5, backgroundColor: '#FD99C9',}} // Adjust size as needed
+            src={adminPic}
+            sx={{ width: 30, height: 30,marginRight:0.5, backgroundColor: '#FD99C9',}} 
           >
             <AdminIcon />
           </Avatar>

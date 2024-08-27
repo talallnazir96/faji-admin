@@ -69,8 +69,6 @@ const Audit = () => {
       try {
         const response = await fetch(`${constant.apiUrl}/audits/audit-logs`);
         const data = await response.json();
-        console.log(data);
-        // data.timeStamp = formatDate(data.timeStamp);
         setLogs(data);
       } catch (error) {
         setError(error.message);
@@ -81,7 +79,6 @@ const Audit = () => {
 
     fetchLogs();
   }, []);
-  console.log(logs);
   const getVariant = () => {
     if (isXs) return "h5";
     if (isSm) return "h5";

@@ -5,9 +5,7 @@ import { Button, Box, Typography, Input, FormControl, FormHelperText, Grid
     import { useMediaQuery, useTheme } from '@mui/material';
     import constant from "../constant";
 import axios from "axios";
-// const initialTemplates = [
-//     { id: 1, title: 'FAJI App', short_desc: 'Organize your events smoothly', phone_num: '+1726788954', email: 'faji@outlook.com', currency: '$' },
-//   ];
+
 
 const Settings = () => {
     const theme = useTheme();
@@ -32,17 +30,6 @@ const Settings = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
-
-//   useEffect(() => {
-//     if (id) {
-//       const existingTemplate = initialTemplates.find(t => t.id === parseInt(id, 10));
-//       console.log(existingTemplate)
-//       if (existingTemplate) {
-//         setTemplate(existingTemplate);
-//         setIsEditMode(true);
-//       }
-//     }
-//   }, [id]);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -69,8 +56,7 @@ const Settings = () => {
               "Content-Type": "application/json",
             },
           });
-      
-          console.log("Response:", response.data);
+
       
           if (response.status === 200 || response.status === 201) {
             setSnackbarOpen(true);

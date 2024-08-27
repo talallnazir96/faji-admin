@@ -68,18 +68,16 @@ function Events() {
       const response = await axios.get(`${constant.apiUrl}/events`, {
         params: { status: status }, // Send status as a query parameter
       });
-      console.log(response.data);
       setEvents(response.data); // Update state with the fetched data
     } catch (err) {
       setError(err.message);
     } finally {
-      setLoading(false); 
+      setLoading(false);
     }
   };
   useEffect(() => {
-    fetchEvents(statusFilter); 
+    fetchEvents(statusFilter);
   }, [statusFilter]);
-  // console.log(events.description);
 
   const handleStatusChange = async (event, eventId) => {
     const newStatus = event.target.value;
@@ -95,14 +93,13 @@ function Events() {
           body: JSON.stringify({ status: newStatus }),
         }
       );
-      console.log(`Response status: ${response.status}`);
+
       if (!response.ok) {
         throw new Error("Failed to update status");
       }
 
       const updatedEvent = await response.json();
 
-      // Update the events state with the new status
       setEvents((prevEvents) =>
         prevEvents.map((event) =>
           event._id === eventId ? { ...event, status: newStatus } : event
@@ -133,8 +130,7 @@ function Events() {
       field: "status",
       editable: true,
       cellRenderer: (params) => {
-        console.log(params);
-
+       
         return (
           <select
             value={params.value}
@@ -174,8 +170,8 @@ function Events() {
           <Box>
             <Link
               to={{
-                pathname: `/events/view-event/${params.data._id}`, // Dynamic route for detail view
-                state: { selectedItem: params.data }, // Pass selected item as state
+                pathname: `/events/view-event/${params.data._id}`,
+                state: { selectedItem: params.data },
               }}
               style={{ textDecoration: "none" }}
             >
@@ -189,8 +185,8 @@ function Events() {
             </Link>
             <Link
               to={{
-                pathname: `/events/update-event/${params.data._id}`, // Dynamic route for detail view
-                state: { selectedItem: params.data }, // Pass selected item as state
+                pathname: `/events/update-event/${params.data._id}`, 
+                state: { selectedItem: params.data }, 
               }}
               style={{ textDecoration: "none" }}
             >
@@ -245,7 +241,6 @@ function Events() {
       );
 
       if (response.ok) {
-        // Successfully deleted
         console.log("Event Deleted Successfully");
         await AuditLogs(
           1,
@@ -254,8 +249,8 @@ function Events() {
           userDetails.userId,
           userDetails.username,
           {
-            title: { old: null, new: 'delete event' },
-            content: { old: null, new: 'delete event' },
+            title: { old: null, new: "delete event" },
+            content: { old: null, new: "delete event" },
           }
         );
         setEvents((prevPosts) => {
@@ -271,7 +266,7 @@ function Events() {
     } catch (error) {
       console.error("Error:", error);
     } finally {
-      setDialogOpen(false); // Close the dialog after handling
+      setDialogOpen(false); 
       setEventIdToDelete(null);
       setSnackbarMessage("Event Deleted Successfully!");
       setSnackbarSeverity("success");

@@ -33,25 +33,7 @@ import constant from "../../constant";
 import axios from "axios";
 import AdminDetails from "../../components/logs/AdminDetails";
 import { AuditLogs } from "../../components/logs/AuditLogs";
-const emailTemplates = [
-  {
-    id: 1,
-    title: "Important Announcment",
-    created_at: "20-06-2024",
-    type: "Announcement",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet accumsan enim. Aliquam erat volutpat. Proin eu eros in lacus iaculis fringilla. Maecenas non consequat tortor. Aliquam varius in dui nec malesuada. Nulla sed sapien id mi malesuada eleifend. Morbi felis ligula, venenatis ac turpis quis, sodales vehicula massa. Ut tincidunt magna quis erat tempus, ac gravida magna blandit. Nulla facilisi. Vivamus id condimentum libero, ut elementum purus.",
-  },
-  {
-    id: 2,
-    title: "Important Announcment",
-    created_at: "20-06-2024",
-    type: "Upcoming Events",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet accumsan enim. Aliquam erat volutpat. Proin eu eros in lacus iaculis fringilla. Maecenas non consequat tortor. Aliquam varius in dui nec malesuada. Nulla sed sapien id mi malesuada eleifend. Morbi felis ligula, venenatis ac turpis quis, sodales vehicula massa. Ut tincidunt magna quis erat tempus, ac gravida magna blandit. Nulla facilisi. Vivamus id condimentum libero, ut elementum purus.",
-  },
-  // Add more templates as needed
-];
+
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });

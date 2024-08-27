@@ -24,7 +24,6 @@ const Login = ({ setAuthToken }) => {
  
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("submit");
     try {
       const response = await axios.post(`${constant.apiUrl}/auth/login`, {
         username,
@@ -54,10 +53,7 @@ const Login = ({ setAuthToken }) => {
       setSnackbarOpen(true);
     }
   };
-  // const [showPassword, setShowPassword] = useState(false);
-  // const handleTogglePassword = () => {
-  //   setShowPassword(!showPassword);
-  // };
+ 
 
   const handleCloseSnackbar = () => {
     setSnackbarOpen(false);
@@ -88,15 +84,7 @@ const Login = ({ setAuthToken }) => {
           variant="outlined"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          // InputProps={{
-          //   endAdornment: (
-          //     <InputAdornment position="end">
-          //       <IconButton onClick={handleTogglePassword} edge="end">
-          //         {showPassword ? <VisibilityOff /> : <Visibility />}
-          //       </IconButton>
-          //     </InputAdornment>
-          //   ),
-          // }}
+     
         />
         <Button
           type="submit"

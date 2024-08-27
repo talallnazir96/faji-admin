@@ -91,8 +91,6 @@ const navigate = useNavigate();
       .get(`${constant.apiUrl}/users/${id}`)
       .then((response) => {
         const data = response.data;
-        // console.log(data);
-        
         setFormData(data);
       })
       .catch((error) => {
@@ -126,8 +124,7 @@ const navigate = useNavigate();
             },
           }
         );
-        console.log("User updated successfully:", response.data);
-        console.log(response.data);
+        // console.log("User updated successfully:", response.data);
         if (response.status === 200 || response.status === 201) {
           setSnackbarOpen(true);
           setSnackbarMessage("User updated successfully!");

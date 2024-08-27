@@ -42,7 +42,6 @@ const formatDate = (date) => {
 const EditPromo = () => {
   const { userDetails } = AdminDetails();
   const { id } = useParams();
-  //   console.log(id);
   const navigate = useNavigate();
   const [selectedItems, setSelectedItems] = useState([]);
   const [formData, setFormData] = useState({
@@ -68,7 +67,7 @@ const EditPromo = () => {
         console.error("Error fetching post data:", error);
       });
   }, [id]);
-  console.log(formData);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === "applicable_events") {
@@ -115,7 +114,7 @@ const EditPromo = () => {
         }
       );
       console.log("Promocode updated successfully:", response.data);
-      console.log(response.data);
+  
       if (response.status === 200 || response.status === 201) {
         setSnackbarOpen(true);
         setSnackbarMessage("Promocode updated successfully!");
@@ -153,7 +152,6 @@ const EditPromo = () => {
     setSnackbarSeverity("success");
     setDialogOpen(false);
     setSnackbarOpen(true);
-    // Handle form submission logic (e.g., send data to the server)
   };
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
@@ -218,7 +216,6 @@ const EditPromo = () => {
           </Grid>
           <Grid item xs={12} sm={6} md={6}>
             <FormControl variant="standard" sx={{ m: 1, mt: 3, width: "100%" }}>
-              {/* <InputLabel id="multiple-select-label">Select Options</InputLabel> */}
               <Select
                 labelId="multiple-select-label"
                 multiple

@@ -41,7 +41,6 @@ const EditPromo = () => {
     console.log(name + ":" + value);
     if (name === "applicable_events") {
       setSelectedItems(
-        // On autofill we get a stringified value.
         typeof value === "string" ? value.split(",") : value
       );
     }
@@ -69,7 +68,7 @@ const EditPromo = () => {
       discount_val: formData.discount,
       applicable_events: selectedItems,
     };
-    console.log("Submitting payload:", payload);
+   
     try {
         const url = `${constant.apiUrl}/promo/`;
         
@@ -177,7 +176,6 @@ const EditPromo = () => {
           </Grid>
           <Grid item xs={12} sm={6} md={6}>
             <FormControl variant="standard" sx={{ m: 1, mt: 3, width: "100%" }}>
-              {/* <InputLabel id="multiple-select-label">Select Options</InputLabel> */}
               <Select
                 labelId="multiple-select-label"
                 multiple

@@ -127,3 +127,20 @@ exports.getTicketById = async (req, res) => {
       .json({ error: "Error fetching ticket", details: err.message });
   }
 };
+// *********************
+// Filter events
+// *********************
+exports.filterTickets = async(req,res)=>{
+  const {filter,value} = req.query;
+  const filterOptions ={
+    event: { eventId: value },
+    user: { userId: value },
+    date: { purchaseDate: new Date(value) },
+  }
+  try {
+    const filterTicket = await Ticket.find(filterOptions[filter]);
+    res.status(200).json(filterTicket);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', details:error.message });
+  }
+}

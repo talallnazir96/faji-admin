@@ -51,7 +51,6 @@ const Blogs = () => {
         const response = await axios.get(`${constant.apiUrl}/blogs/`, {
           params: { page, limit: 6 },
         });
-        // console.log(blogs);
         setBlogs(response.data.blogs);
         setHasMore(
           response.data.blogs.length > 0 && response.data.blogs.length === 6
@@ -65,7 +64,6 @@ const Blogs = () => {
 
     fetchBlogs();
   }, [page]);
-  console.log(blogs);
   const loadMore = () => {
     setPage((prevPage) => prevPage + 1);
   };
@@ -111,9 +109,8 @@ const Blogs = () => {
       );
 
       if (response.ok) {
-   
         console.log("Post deleted successfully");
-       
+
         await AuditLogs(
           1,
           new Date(),
@@ -121,12 +118,10 @@ const Blogs = () => {
           userDetails.userId,
           userDetails.username,
           {
-            
-            action: { old: null, new: 'Blog Deleted' },
-            
+            action: { old: null, new: "Blog Deleted" },
           }
         );
-       
+
         setBlogs((prevPosts) => {
           const updatedPosts = prevPosts.filter(
             (post) => post._id !== postIdToDelete
@@ -140,8 +135,8 @@ const Blogs = () => {
     } catch (error) {
       console.error("Error:", error);
     } finally {
-      setDialogOpen(false); // Close the dialog after handling
-      setPostIdToDelete(null); // Clear the post ID
+      setDialogOpen(false);
+      setPostIdToDelete(null);
     }
   };
   const handleSnackbarClose = () => {
@@ -200,24 +195,18 @@ const Blogs = () => {
             sx={{ fontSize: "10px" }}
             variant="outlined"
             color="customColor"
-            onClick={loadMore} // Ensure you have a handler for this
+            onClick={loadMore}
           >
             <HourglassEmptyIcon sx={{ fontSize: "14px", marginRight: "5px" }} />
             Load More
           </Button>
-
-          {/* <Button  variant="outlined" color='customColor' sx={{fontSize:"8px",paddingLeft:"40px"}}    startIcon={<HourglassEmptyIcon  size="small"/>}  >LoadMore</Button> */}
         </Grid>
-        {/* <Grid item xs={4} sm={4} md={2} align="right">
-                    
-                </Grid> */}
       </Grid>
       <Grid container spacing={1}>
         {blogs.map((blog) => {
-          // console.log(blog);
           return (
             <Grid item xs={12} sm={6} md={4} key={blog._id}>
-              <Card sx={{ maxWidth: "100%"}}>
+              <Card sx={{ maxWidth: "100%" }}>
                 <CardMedia
                   component="img"
                   alt="green iguana"
@@ -232,7 +221,7 @@ const Blogs = () => {
                     {blog.content}
                   </Typography>
                 </CardContent>
-                <CardActions sx={{justifyContent:"center" }}>
+                <CardActions sx={{ justifyContent: "center" }}>
                   <Button
                     size="small"
                     onClick={() => handleDelete(blog._id)}
@@ -241,14 +230,14 @@ const Blogs = () => {
                   >
                     <DeleteIcon
                       sx={{ fontSize: "14px", marginRight: "10px" }}
-                    />{" "}
+                    />
                     Delete
                   </Button>
                   <Link to={`/blogs/blog-form/edit/${blog._id}`}>
                     <Button size="small" variant="outlined" color="customColor">
                       <EditIcon
                         sx={{ fontSize: "14px", marginRight: "10px" }}
-                      />{" "}
+                      />
                       Edit
                     </Button>
                   </Link>

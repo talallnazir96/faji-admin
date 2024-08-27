@@ -18,25 +18,6 @@ import { useNavigate } from "react-router-dom";
 import AdminDetails from "../../components/logs/AdminDetails";
 import { AuditLogs } from "../../components/logs/AuditLogs";
 
-const initialTemplates = [
-  {
-    id: 1,
-    title: "Important Announcment",
-    date: "2023-07-06",
-    type: "announcement",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet accumsan enim. Aliquam erat volutpat. Proin eu eros in lacus iaculis fringilla. Maecenas non consequat tortor. Aliquam varius in dui nec malesuada. Nulla sed sapien id mi malesuada eleifend. Morbi felis ligula, venenatis ac turpis quis, sodales vehicula massa. Ut tincidunt magna quis erat tempus, ac gravida magna blandit. Nulla facilisi. Vivamus id condimentum libero, ut elementum purus.",
-  },
-  {
-    id: 2,
-    title: "Important Announcment",
-    date: "2023-07-06",
-    type: "upcoming_events",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet accumsan enim. Aliquam erat volutpat. Proin eu eros in lacus iaculis fringilla. Maecenas non consequat tortor. Aliquam varius in dui nec malesuada. Nulla sed sapien id mi malesuada eleifend. Morbi felis ligula, venenatis ac turpis quis, sodales vehicula massa. Ut tincidunt magna quis erat tempus, ac gravida magna blandit. Nulla facilisi. Vivamus id condimentum libero, ut elementum purus.",
-  },
-  // Add more templates as needed
-];
 const type = [
   {
     value: "announcement",
@@ -92,7 +73,7 @@ const NotificationForm = () => {
       setIsEditMode(false);
     }
   }, [id]);
-  console.log(template);
+
   
 
   const handleChange = (event) => {
@@ -118,7 +99,7 @@ const NotificationForm = () => {
             headers: { "Content-Type": "application/json" },
           });
 
-      console.log("Notification Template operation successful:", response.data);
+      // console.log("Notification Template operation successful:", response.data);
       setSnackbarOpen(true);
       setSnackbarMessage(
         isEditMode

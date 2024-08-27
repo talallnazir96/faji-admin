@@ -54,18 +54,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-{
-  /* <Grid container spacing={3} sx={{width:{xs:"150%",lg:"100%"}
-      }}>
-        <Grid  item xs={12} sm={12} md={6} lg={6}>
-          <ChartCard />
-        </Grid>
-        <Grid item xs={12} sm={12} md={6} lg={6}>
-          <UsersChart />
-          
-        </Grid>
-        <Grid item xs={12} sm={12} md={12}>
-          <HomeTable />
-        </Grid>
-      </Grid> */
-}
+

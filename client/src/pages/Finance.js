@@ -71,7 +71,7 @@ const Finance = () => {
 
     fetchTotalEvents();
   }, []);
-  console.log(totalEvents);
+
   useEffect(() => {
     const fetchTotalRevenue = async () => {
       try {

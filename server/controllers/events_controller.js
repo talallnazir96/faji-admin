@@ -138,16 +138,16 @@ exports.createEvent = async (req, res) => {
 // *****************
 // Get approved events
 // *****************
-// exports.getApprovedEvents = async (req, res) => {
-//   try {
+exports.getApprovedEvents = async (req, res) => {
+  try {
 
-//     const events = await Event.findOne({ status: "approved" });
-//     console.log(events.status);
-//     res.json(events);
-//   } catch (error) {
-//     res.status(500).send("Server error");
-//   }
-// };
+    const events = await Event.findOne({ status: "approved" });
+    console.log(events.status);
+    res.json(events);
+  } catch (error) {
+    res.status(500).send("Server error");
+  }
+};
 // *****************
 // Update event status
 // *****************
@@ -170,40 +170,42 @@ exports.updatedEventStatus = async (req, res) => {
     res.status(500).json({ message: "Server error", error });
   }
 };
-
-// exports.needInfo = async (req, res) => {
-//   try {
-//     const eventId = req.params.id;
-//     const event = await Event.findByIdAndUpdate(
-//       eventId,
-//       { status: "req_info" },
-//       { new: true }
-//     );
-//     res.status(200).json({ message: "Event need info ", event });
-//   } catch (error) {
-//     res.status(500).json({ error: "Error event need info" });
-//   }
-// };
+// *****************
+// needInfo status
+// *****************
+exports.needInfo = async (req, res) => {
+  try {
+    const eventId = req.params.id;
+    const event = await Event.findByIdAndUpdate(
+      eventId,
+      { status: "req_info" },
+      { new: true }
+    );
+    res.status(200).json({ message: "Event need info ", event });
+  } catch (error) {
+    res.status(500).json({ error: "Error event need info" });
+  }
+};
 
 // *****************
 // Decline Event
 // *****************
 
-// exports.declineEvent = async (req, res) => {
-//   try {
-//     const eventId = req.params.id;
-//     const { reason } = req.body;
+exports.declineEvent = async (req, res) => {
+  try {
+    const eventId = req.params.id;
+    const { reason } = req.body;
 
-//     const event = await Event.findByIdAndUpdate(
-//       eventId,
-//       { status: "declined", reason },
-//       { new: true }
-//     );
-//     res.status(200).json({ message: "Event declined", event });
-//   } catch (error) {
-//     res.status(500).json({ error: "Error declining event" });
-//   }
-// };
+    const event = await Event.findByIdAndUpdate(
+      eventId,
+      { status: "declined", reason },
+      { new: true }
+    );
+    res.status(200).json({ message: "Event declined", event });
+  } catch (error) {
+    res.status(500).json({ error: "Error declining event" });
+  }
+};
 
 // *****************
 // Update Event

@@ -21,53 +21,6 @@ const createData = (title, date, time, seats, location, price, status) => {
   return { title, date, time, seats, location, price, status };
 };
 
-const rows = [
-  createData(
-    "Party A",
-    "2024-07-10",
-    "18:00",
-    100,
-    "Location A",
-    "$50",
-    "active"
-  ),
-  createData(
-    "Party B",
-    "2024-07-15",
-    "20:00",
-    200,
-    "Location B",
-    "$75",
-    "pending"
-  ),
-  createData(
-    "Party C",
-    "2024-07-20",
-    "19:00",
-    150,
-    "Location C",
-    "$60",
-    "active"
-  ),
-  createData(
-    "Party D",
-    "2024-07-25",
-    "21:00",
-    80,
-    "Location D",
-    "$40",
-    "pending"
-  ),
-  createData(
-    "Party E",
-    "2024-07-30",
-    "22:00",
-    120,
-    "Location E",
-    "$55",
-    "active"
-  ),
-];
 
 const DataTable = () => {
   const navigate = useNavigate();
@@ -75,7 +28,7 @@ const DataTable = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const fetchEvents = async () => {
-    setLoading(true); // Show loading spinner
+    setLoading(true);
 
     try {
       const response = await axios.get(`${constant.apiUrl}/events`);
@@ -83,19 +36,19 @@ const DataTable = () => {
       const filteredEvents = response.data.filter(
         (event) => event.status === "approved" || event.status === "pending"
       );
-      setEvents(filteredEvents); // Update state with the filtered data
+      setEvents(filteredEvents);
     } catch (err) {
       setError(err.message);
     } finally {
-      setLoading(false); // Stop the loading spinner
+      setLoading(false); 
     }
   };
   useEffect(() => {
-    fetchEvents(); // Fetch events with the default status filter
+    fetchEvents(); 
   }, []);
-  console.log(events);
+ 
   const handleViewEvent = (eventId) => {
-    navigate(`events/update-event/${eventId}`); // Navigate to the view event page
+    navigate(`events/update-event/${eventId}`); 
   };
   return (
     <TableContainer component={Paper}>
